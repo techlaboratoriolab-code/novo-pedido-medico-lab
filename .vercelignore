@@ -1,0 +1,10 @@
+.venv
+.venv-1
+.vscode
+__pycache__
+*.py
+*.pdf
+*.csv
+PERSONALIZACAO.md
+README.md
+supabase_schema.sql

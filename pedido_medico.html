@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido Médico - LAB</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary: #1d4ed8;
+            --primary-light: #dbeafe;
+            --primary-mid: #3b82f6;
+            --accent: #0ea5e9;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #cbd5e1;
+            --bg-subtle: #f8fafc;
+            --bg-section: #f1f5f9;
+            --white: #ffffff;
+            --shadow: 0 4px 24px rgba(30, 41, 59, 0.10);
+            --radius: 10px;
+            --radius-sm: 6px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #e2e8f0;
+            padding: 24px;
+            font-size: 12px;
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 14px 18px;
+            box-shadow: var(--shadow);
+            border-radius: 14px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Cabeçalho */
+        .header {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2.5px solid var(--primary);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: auto;
+            height: 60px;
+            max-width: 250px;
+        }
+
+        .qrcode-section {
+            text-align: center;
+        }
+
+        .qrcode {
+            width: 80px;
+            height: 80px;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .qrcode-text {
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        /* Título */
+        .titulo {
+            background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            padding: 7px 12px;
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            border-radius: var(--radius-sm);
+            letter-spacing: 0.3px;
+        }
+
+        /* Box de dados do paciente */
+        .dados-paciente {
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            background: var(--bg-subtle);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 8px;
+            align-items: flex-end;
+        }
+
+        .form-row-2 {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .form-field label {
+            font-weight: 600;
+            font-size: 10px;
+            margin-bottom: 3px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-field input {
+            width: 100%;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 6px 9px;
+            font-size: 12.5px;
+            font-family: 'Inter', Arial, sans-serif;
+            background: var(--white);
+            color: var(--text);
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .form-field input[type="checkbox"] {
+            width: auto;
+            accent-color: var(--primary);
+            border: none;
+            background: none;
+        }
+
+        .form-field input:focus {
+            outline: none;
+            border-color: var(--primary-mid);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .form-field input[type="date"] {
+            font-family: 'Inter', Arial, sans-serif;
+        }
+
+        .form-field select {
+            width: 100%;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 6px 9px;
+            font-size: 12.5px;
+            font-family: 'Inter', Arial, sans-serif;
+            background: var(--white);
+            cursor: pointer;
+            color: var(--text);
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .form-field select:focus {
+            outline: none;
+            border-color: var(--primary-mid);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        /* Seções de exames */
+        .secao {
+            margin-bottom: 5px;
+        }
+
+        .secao-titulo {
+            font-weight: 700;
+            font-size: 11.5px;
+            margin-bottom: 4px;
+            padding: 3px 8px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            display: flex;
+            align-items: center;
+            letter-spacing: 0.2px;
+            text-transform: uppercase;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 14px;
+            margin-top: 3px;
+            font-size: 12px;
+            padding: 0 4px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-item label {
+            cursor: pointer;
+            user-select: none;
+            color: var(--text);
+        }
+
+        /* Lista de exames */
+        .lista-exames {
+            margin-top: 3px;
+            font-size: 11px;
+            line-height: 1.4;
+            padding-left: 15px;
+        }
+
+        .lista-exames li {
+            margin-bottom: 3px;
+        }
+
+        .lista-exames input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            margin-right: 5px;
+            vertical-align: middle;
+            accent-color: var(--primary);
+        }
+
+        /* Dados complementares */
+        .dados-complementares {
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 8px 10px;
+            min-height: 40px;
+            margin-bottom: 8px;
+            background: var(--bg-subtle);
+        }
+
+        .dados-complementares-titulo {
+            font-weight: 700;
+            font-size: 11.5px;
+            margin-bottom: 5px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+        }
+
+        .dados-complementares textarea {
+            width: 100%;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 5px 8px;
+            resize: vertical;
+            min-height: 30px;
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 12px;
+            color: var(--text);
+            background: var(--white);
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .dados-complementares textarea:focus {
+            outline: none;
+            border-color: var(--primary-mid);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        /* Rodapé */
+        .rodape {
+            margin-top: 8px;
+        }
+
+        .data-frascos {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 8px;
+            font-size: 12.5px;
+        }
+
+        .data-frascos .form-field {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .data-frascos input {
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            width: 120px;
+            font-size: 12.5px;
+            padding: 6px 9px;
+            font-family: 'Inter', Arial, sans-serif;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+
+        .data-frascos input:focus {
+            outline: none;
+            border-color: var(--primary-mid);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .data-frascos label {
+            font-weight: 600;
+            margin-bottom: 3px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .data-frascos .form-field input {
+            width: 100%;
+        }
+
+        .assinaturas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+        .assinatura-box {
+            text-align: center;
+        }
+
+        .assinatura-linha {
+            border-bottom: 1.5px solid var(--border);
+            min-height: 70px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 4px;
+        }
+
+        .assinatura-medico-display {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 30px;
+            color: var(--primary);
+        }
+
+        .assinatura-label {
+            font-weight: 600;
+            font-size: 11.5px;
+            color: var(--text);
+        }
+
+        .assinatura-sublabel {
+            font-size: 9.5px;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 2px;
+        }
+
+        /* Informações dos médicos */
+        .medicos-info {
+            border-top: 1.5px solid var(--border);
+            padding-top: 7px;
+            font-size: 11px;
+            line-height: 1.5;
+            background: var(--bg-subtle);
+            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+            padding: 7px 10px 6px;
+            margin-top: 6px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+        }
+
+        .medicos-lista {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            margin-bottom: 5px;
+            gap: 2px 10px;
+        }
+
+        .contatos {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 4px;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .endereco-lab {
+            font-size: 10.5px;
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Botões */
+        .botoes {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding-top: 16px;
+            border-top: 1.5px dashed var(--border);
+        }
+
+        .botoes button {
+            padding: 10px 22px;
+            font-size: 13px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Inter', Arial, sans-serif;
+            transition: all 0.2s;
+            letter-spacing: 0.2px;
+        }
+
+        .botoes button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+            filter: brightness(1.07);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--primary-mid) 0%, var(--primary) 100%);
+            color: white;
+        }
+
+        .btn-tertiary {
+            background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+            color: white;
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 5mm 7mm;
+            }
+
+            * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+                font-size: 9.5px;
+            }
+
+            .botoes { display: none; }
+            #status-conexao { display: none; }
+
+            .container {
+                box-shadow: none;
+                padding: 2px 4px;
+                max-width: 100%;
+                border-radius: 0;
+                border: none;
+            }
+
+            .header {
+                margin-bottom: 3px;
+                padding-bottom: 3px;
+            }
+
+            .logo { height: 36px !important; }
+
+            .titulo {
+                margin-bottom: 4px;
+                padding: 3px 8px;
+                font-size: 12px;
+            }
+
+            /* Campos do paciente: voltar para inline no print */
+            .dados-paciente {
+                margin-bottom: 4px;
+                padding: 4px 7px;
+                background: #f8fafc !important;
+            }
+
+            .form-row {
+                margin-bottom: 3px;
+                gap: 6px;
+                align-items: center;
+            }
+
+            .form-field {
+                flex-direction: row !important;
+                align-items: center !important;
+                gap: 0;
+            }
+
+            .form-field label {
+                font-size: 8.5px;
+                margin-bottom: 0 !important;
+                margin-right: 4px;
+                white-space: nowrap;
+            }
+
+            .form-field input,
+            .form-field select {
+                padding: 2px 5px !important;
+                font-size: 9.5px !important;
+                border-width: 1px !important;
+            }
+
+            /* Seções */
+            .secao {
+                margin-bottom: 2px;
+                page-break-inside: avoid;
+            }
+
+            .secao-titulo {
+                padding: 1px 6px;
+                font-size: 8.5px;
+                margin-bottom: 2px;
+                border-left-width: 2px;
+            }
+
+            .checkbox-group {
+                margin-top: 1px;
+                gap: 2px 10px;
+            }
+
+            .checkbox-item {
+                gap: 3px;
+                font-size: 9px;
+            }
+
+            .checkbox-item input[type="checkbox"] {
+                width: 11px;
+                height: 11px;
+            }
+
+            /* Agentes infecciosos */
+            .checkbox-group[style*="flex-direction: column"] {
+                gap: 1px 0;
+            }
+
+            /* Dados complementares */
+            .dados-complementares {
+                margin-bottom: 3px;
+                min-height: 18px;
+                padding: 3px 6px;
+            }
+            .dados-complementares-titulo { font-size: 8.5px; margin-bottom: 2px; }
+            .dados-complementares textarea { min-height: 18px; font-size: 9px; padding: 2px 4px; }
+
+            /* Rodapé */
+            .rodape { margin-top: 4px; }
+
+            .data-frascos {
+                margin-bottom: 4px;
+                gap: 20px;
+            }
+
+            .data-frascos .form-field {
+                flex-direction: row !important;
+                align-items: center !important;
+            }
+
+            .data-frascos label {
+                font-size: 8.5px !important;
+                margin-bottom: 0 !important;
+                margin-right: 4px;
+            }
+
+            .data-frascos input {
+                padding: 2px 5px !important;
+                font-size: 9.5px !important;
+                width: 90px !important;
+            }
+
+            .assinaturas {
+                margin-bottom: 4px;
+                gap: 10px;
+            }
+
+            .assinatura-linha { min-height: 22px; }
+            .assinatura-label { font-size: 9px; }
+            .assinatura-sublabel { font-size: 8px; }
+            .assinatura-medico-display { font-size: 22px; }
+
+            .medicos-info {
+                padding: 4px 7px;
+                font-size: 8.5px;
+            }
+
+            .medicos-lista { gap: 2px; margin-bottom: 3px; }
+            .contatos { gap: 8px; margin-bottom: 2px; }
+            .endereco-lab { font-size: 8px; }
+        }
+
+        .linha-horizontal {
+            border-bottom: 1px solid transparent;
+            flex: 1;
+            margin: 0 0 0 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Cabeçalho -->
+        <div class="header">
+            <div class="logo-section">
+                <img src="logo.svg" alt="Lab Logo" class="logo" style="height: 50px; width: auto; max-width: 250px;">
+            </div>
+        </div>
+
+        <!-- Título -->
+        <div class="titulo">Pedido Médico</div>
+
+        <!-- Dados do Paciente -->
+        <div class="dados-paciente">
+            <div class="form-row">
+                <div class="form-field" style="flex: 1;">
+                    <label>Nome:</label>
+                    <input type="text" id="nomePaciente">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field" style="flex: 2;">
+                    <label>Mãe:</label>
+                    <input type="text" id="nomeMae">
+                </div>
+                <div class="form-field" style="flex: 1;">
+                    <label>Fone:</label>
+                    <input type="tel" id="telefone">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field" style="flex: 2;">
+                    <label>CPF:</label>
+                    <input type="text" id="cpf" maxlength="14">
+                </div>
+                <div class="form-field" style="flex: 1.5;">
+                    <label>Data Nasc:</label>
+                    <input type="date" id="dataNasc">
+                </div>
+                <div class="form-field" style="flex: 1;">
+                    <label>Gênero:</label>
+                    <select id="genero">
+                        <option value="">Selecione</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Feminino</option>
+                        <option value="O">Outro</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-field" style="flex: 2;">
+                    <label>Convênio:</label>
+                    <select id="convenio">
+                        <option value="">Selecione um convênio</option>
+                    </select>
+                </div>
+                <div class="form-field" style="flex: 1;">
+                    <label>Inscrição:</label>
+                    <input type="text" id="inscricao">
+                </div>
+            </div>
+        </div>
+
+        <!-- Local de Coleta -->
+        <div class="secao">
+            <div class="secao-titulo">Local de Coleta <span class="linha-horizontal"></span></div>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ectocervice">
+                    <label for="ectocervice">Ectocérvice</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="endocervice">
+                    <label for="endocervice">Endocérvice</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="fundosaco">
+                    <label for="fundosaco">Fundo de Saco</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="vagina">
+                    <label for="vagina">Vagina</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="vulva">
+                    <label for="vulva">Vulva</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="anus">
+                    <label for="anus">Ânus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="boca">
+                    <label for="boca">Boca</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="outros">
+                    <label for="outros">Outros</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rotina Cito-histopatológica -->
+        <div class="secao">
+            <div class="secao-titulo">Rotina Cito-histopatológica <span class="linha-horizontal"></span></div>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="citologiaConv">
+                    <label for="citologiaConv">Citologia Convencional</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="citologiaLiq">
+                    <label for="citologiaLiq">Citologia em Base Líquida</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="citologiaGeral">
+                    <label for="citologiaGeral">Citologia Geral</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="citologiaHorm">
+                    <label for="citologiaHorm">Citologia Hormonal Isolada</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="histopatologia">
+                    <label for="histopatologia">Histopatologia</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="citologiaAnal">
+                    <label for="citologiaAnal">Citologia Anal</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Molecular para HPV -->
+        <div class="secao">
+            <div class="secao-titulo">Painel Molecular para HPV <span class="linha-horizontal"></span></div>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hpvAltoRisco">
+                    <label for="hpvAltoRisco">Alto Risco</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hpvBaixoRisco">
+                    <label for="hpvBaixoRisco">Baixo Risco</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hpv28">
+                    <label for="hpv28">HPV 28 Tipos</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hpvQuant">
+                    <label for="hpvQuant">HPV Quant 21 Tipos</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Molecular para Agentes Infecciosos -->
+        <div class="secao">
+            <div class="secao-titulo">Painel Molecular para Agentes Infecciosos <span class="linha-horizontal"></span></div>
+            <div class="checkbox-group" style="flex-direction: column; flex-wrap: nowrap; gap: 4px 0; padding: 2px 4px;">
+                <div class="checkbox-item" style="align-items: flex-start;">
+                    <input type="checkbox" id="infec1" style="margin-top: 2px; flex-shrink: 0;">
+                    <label for="infec1">Clamídia / Gonococos / <i>Mycoplasma genitalium / Trichomonas vaginalis</i></label>
+                </div>
+                <div class="checkbox-item" style="align-items: flex-start;">
+                    <input type="checkbox" id="infec2" style="margin-top: 2px; flex-shrink: 0;">
+                    <label for="infec2">Clamídia / Gonococos / <i>Mycoplasma genitalium / Mycoplasma hominis / Trichomonas vaginalis / Ureaplasma urealyticum / Ureaplasma parvum</i></label>
+                </div>
+                <div class="checkbox-item" style="align-items: flex-start;">
+                    <input type="checkbox" id="infec2b" style="margin-top: 2px; flex-shrink: 0;">
+                    <label for="infec2b"><i>Streptococcus agalactiae</i></label>
+                </div>
+                <div class="checkbox-item" style="align-items: flex-start;">
+                    <input type="checkbox" id="infec3" style="margin-top: 2px; flex-shrink: 0;">
+                    <label for="infec3">Herpes I e II / <i>Varicella-zoster virus / Cytomegalovirus / C.trachomatis</i> LGV / <i>T.pallidum / H. ducreyi</i></label>
+                </div>
+                <div class="checkbox-item" style="align-items: flex-start;">
+                    <input type="checkbox" id="infec4" style="margin-top: 2px; flex-shrink: 0;">
+                    <label for="infec4">Candida: <i>albicans / dubliniensis / glabrata / krusei / lusitaniae / parapsilosis / tropicalis</i></label>
+                </div>
+                <div class="checkbox-item" style="align-items: flex-start;">
+                    <input type="checkbox" id="infec5" style="margin-top: 2px; flex-shrink: 0;">
+                    <label for="infec5">Bactérias associadas à vaginose bacteriana 2 / <i>Atopobium vaginae / Bacteroides fragilis / Gardnerella vaginalis / Lactobacillus spp / Megasphaera Tipo 1 / Mobiluncus spp</i></label>
+                </div>
+                <div class="checkbox-item" style="align-items: flex-start;">
+                    <input type="checkbox" id="infec6" style="margin-top: 2px; flex-shrink: 0;">
+                    <label for="infec6">Microbioma Vaginal: <i>Lactobacillus spp / Gardnerella vaginalis / Prevotella bivia / Porphyromonas spp / Candida spp / Ureaplasma spp / Mycoplasma hominis / Mycoplasma genitalium / Trichomonas vaginalis / Neisseria gonorrhoeae / Chlamydia trachomatis / Herpes I e II / Cytomegalovirus</i></label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Culturas -->
+        <div class="secao">
+            <div class="secao-titulo">Culturas <span class="linha-horizontal"></span></div>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="culturaStrep">
+                    <label for="culturaStrep">Cultura Seletiva para Streptococcus Agalactiae grupo B</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="culturaBact">
+                    <label for="culturaBact">Cultura Bacteriológica</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="culturaCandida">
+                    <label for="culturaCandida">Cultura para Candidas</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="urocultura">
+                    <label for="urocultura">Urocultura</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="antibiograma">
+                    <label for="antibiograma">Antibiograma</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="antifungigrama">
+                    <label for="antifungigrama">Antifungigrama</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Microscopia -->
+        <div class="secao">
+            <div class="secao-titulo">Microscopia <span class="linha-horizontal"></span></div>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="bacterioscopia">
+                    <label for="bacterioscopia">Bacterioscopia</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel Molecular para Risco de Trombose -->
+        <div class="secao">
+            <div class="secao-titulo">Painel Molecular para Risco de Trombose 6 Mutações <span class="linha-horizontal"></span></div>
+            <div class="checkbox-group" style="flex-direction: column; flex-wrap: nowrap; gap: 4px 0; padding: 2px 4px;">
+                <div class="checkbox-item" style="align-items: flex-start;">
+                    <input type="checkbox" id="painelTrombose" style="margin-top: 2px; flex-shrink: 0;">
+                    <label for="painelTrombose">Fator V de Leiden (R506Q) (H1299R) (Y1702C) Protrombina (G20210A) Mutação MTHFR (C677T) (A1298C)</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Indicação -->
+        <div class="secao">
+            <div class="secao-titulo">Indicação <span class="linha-horizontal"></span></div>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="rotinaPrev">
+                    <label for="rotinaPrev">Rotina Preventiva</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="alteracaoCito">
+                    <label for="alteracaoCito">Alteração Citológica Prévia</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="controleTrat">
+                    <label for="controleTrat">Controle Após Tratamento</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="outrosInd">
+                    <label for="outrosInd">Outros:</label>
+                    <input type="text" style="width: 130px; border: 1.5px solid var(--border); border-radius: 6px; padding: 3px 7px; font-size: 12px; background: white; font-family: 'Inter', Arial, sans-serif;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Colposcopia -->
+        <div class="secao">
+            <div class="secao-titulo">Colposcopia <span class="linha-horizontal"></span></div>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="colpoNaoReal">
+                    <label for="colpoNaoReal">Não realizada</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="colpoSemAlt">
+                    <label for="colpoSemAlt">Sem alterações</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="colpoMaiores">
+                    <label for="colpoMaiores">Achados maiores</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="colpoMenores">
+                    <label for="colpoMenores">Achados menores</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informes Clínicos -->
+        <div class="secao">
+            <div class="secao-titulo">Informes Clínicos <span class="linha-horizontal"></span></div>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ium">
+                    <label for="ium">UM.:___</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="thr">
+                    <label for="thr">THR</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="aco">
+                    <label for="aco">ACO</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="diu">
+                    <label for="diu">DIU</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="prurido">
+                    <label for="prurido">Prurido</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="gestante">
+                    <label for="gestante">Gestante</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="menopausa">
+                    <label for="menopausa">Menopausa</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cauterizacao">
+                    <label for="cauterizacao">Cauterização</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="caf">
+                    <label for="caf">CAF</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="histerectomia">
+                    <label for="histerectomia">Histerectomia</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dados Complementares -->
+        <div class="dados-complementares">
+            <div class="dados-complementares-titulo">Dados Complementares</div>
+            <textarea id="dadosComplementares" placeholder="Informações adicionais..."></textarea>
+        </div>
+
+        <!-- Rodapé -->
+        <div class="rodape">
+            <div class="data-frascos">
+                <div class="form-field">
+                    <label>Data:</label>
+                    <input type="text" id="dataExame" style="width: 120px;">
+                </div>
+                <div class="form-field">
+                    <label>Nº de frascos/Lâminas:</label>
+                    <input type="text" id="numeroFrascos" style="width: 70px;">
+                </div>
+            </div>
+
+            <div class="assinaturas">
+                <div class="assinatura-box">
+                    <div class="assinatura-linha"></div>
+                    <div class="assinatura-label">Paciente (Assinatura)</div>
+                    <div class="assinatura-sublabel">Autorizo realização dos procedimentos e envio da<br>amostra para o Lab conforme termo no verso</div>
+                </div>
+                <div class="assinatura-box">
+                    <div class="assinatura-linha">
+                        <div class="assinatura-medico-display" id="assinaturaMedico"></div>
+                    </div>
+                    <div class="assinatura-label">Médico (Carimbo / Assinatura)</div>
+                    <div class="assinatura-sublabel" id="infoMedicoAssinatura"></div>
+                </div>
+            </div>
+
+            <div class="medicos-info">
+                <div class="medicos-lista">
+                    <span><strong>Décio Fausto Gorini</strong> CRM DF 1768 RQE 925</span>
+                    <span><strong>Aline Marques dos Santos</strong> CRM-DF 15109 RQE: 12803</span>
+                    <span><strong>Thiago José Fernandes</strong> CRM DF 1768 RQE 9729</span>
+                    <span><strong>Aline de Fátima Filha Santos</strong> CRM-DF 22785 RQE: 17678</span>
+                </div>
+                <div class="contatos">
+                    <span>📱 (61) 3245-3766</span>
+                    <span>📞 (61) 3245-4305</span>
+                    <span>🌐 laboratoriolab.com.br</span>
+                    <span>✉ lab@laboratoriolab.com.br</span>
+                </div>
+                <div class="endereco-lab">
+                    🏥 SHLS 716 - Centro Médico de Brasília, Bloco E - Salas 205/207 - CEP: 70390-700
+                </div>
+            </div>
+        </div>
+
+        <!-- Botões -->
+        <div class="botoes">
+            <button class="btn-primary" onclick="imprimirESalvar()">🖨️ Imprimir / Salvar PDF</button>
+            <button class="btn-secondary" onclick="salvarFormulario()">💾 Salvar Dados</button>
+            <button class="btn-tertiary" onclick="limparFormulario()">🔄 Limpar Formulário</button>
+        </div>
+        <div id="status-conexao" style="margin-top: 8px; font-size: 11px; color: var(--text-muted); text-align: center; padding: 0 4px;"></div>
+    </div>
+
+    <script>
+        // Convênios disponíveis
+        const convenios = [
+            {id: "100", nome: "CORTESIA"},
+            {id: "101", nome: "PARTICULAR"},
+            {id: "1000", nome: "ASSEFAZ"},
+            {id: "1001", nome: "BRADESCO"},
+            {id: "1002", nome: "AMIL"},
+            {id: "1003", nome: "BACEN"},
+            {id: "1004", nome: "CASSI"},
+            {id: "1005", nome: "SAÚDE CAIXA"},
+            {id: "1006", nome: "SULAMERICA"},
+            {id: "1007", nome: "TESTE"},
+            {id: "1008", nome: "CASEMBRAPA"},
+            {id: "1009", nome: "CONAB"},
+            {id: "1010", nome: "AFEB BRASAL"},
+            {id: "1011", nome: "SCAIXA-01"},
+            {id: "1012", nome: "E-VIDA"},
+            {id: "1013", nome: "FACEB"},
+            {id: "1014", nome: "AFFEGO"},
+            {id: "1015", nome: "CAMED"},
+            {id: "1017", nome: "ASETE (ASTE)"},
+            {id: "1018", nome: "CODEVASF-CASEC"},
+            {id: "1019", nome: "CAEME"},
+            {id: "1021", nome: "FAPES"},
+            {id: "1022", nome: "NOTRE DAME"},
+            {id: "1023", nome: "CNTI"},
+            {id: "1024", nome: "FASCAL"},
+            {id: "1025", nome: "SISCAIXA-06"},
+            {id: "1026", nome: "SCXTRF-54"},
+            {id: "1027", nome: "SCAMARA-05"},
+            {id: "1028", nome: "SCXSTF-55"},
+            {id: "1029", nome: "SCXSENADO-53"},
+            {id: "1030", nome: "POSTAL SAUDE"},
+            {id: "1031", nome: "ASSEFAZ BIOMOL"},
+            {id: "1032", nome: "ALLIANZ SAÚDE"},
+            {id: "1033", nome: "UNAFISCO-SINDIFISCO"},
+            {id: "1034", nome: "TST SAUDE"},
+            {id: "1035", nome: "TRT SAUDE"},
+            {id: "1036", nome: "TRF-PRO SOCIAL"},
+            {id: "1037", nome: "TRE SAÚDE"},
+            {id: "1038", nome: "TJDFT-PRO SAUDE"},
+            {id: "1039", nome: "STM-PLAS/JMU"},
+            {id: "1040", nome: "STJ-PRO SER"},
+            {id: "1041", nome: "STF"},
+            {id: "1042", nome: "SERPRO"},
+            {id: "1043", nome: "PROASA"},
+            {id: "1044", nome: "MPT"},
+            {id: "1045", nome: "MPM-PLANASSISTE"},
+            {id: "1046", nome: "MPT-PLANASSISTE"},
+            {id: "1047", nome: "PETROBRAS DISTRIBUIDORA"},
+            {id: "1048", nome: "PETROBRAS PETRÓLEO"},
+            {id: "1049", nome: "OMINT"},
+            {id: "1050", nome: "LIFE EMPRESARIAL"},
+            {id: "1051", nome: "INFRAERO"},
+            {id: "1052", nome: "GRAVIA"},
+            {id: "1053", nome: "CAESAN"},
+            {id: "1054", nome: "EMBRATEL"},
+            {id: "1055", nome: "SULAMERICA-090"},
+            {id: "1056", nome: "GEAP"},
+            {id: "1057", nome: "SJ-DF -PRO SOCIAL"},
+            {id: "1058", nome: "CARE PLUS"},
+            {id: "1059", nome: "BRB"},
+            {id: "1060", nome: "CÂMARA DOS DEPUTADOS - Medicina Laboratorial"},
+            {id: "1061", nome: "SCAIXAPER-99"},
+            {id: "1062", nome: "SISCAIXA-07"},
+            {id: "1063", nome: "SISCAIXA-20"},
+            {id: "1064", nome: "E-VIDAPER"},
+            {id: "1065", nome: "CASSI-PER"},
+            {id: "1066", nome: "FACEBPER"},
+            {id: "1067", nome: "MPF-PLANASSISTE"},
+            {id: "1068", nome: "CASSI BIOMOL"},
+            {id: "1069", nome: "BRA CITOLAB"},
+            {id: "1070", nome: "SUL CITOLAB"},
+            {id: "1071", nome: "SULAMERICA BIOMOL"},
+            {id: "1072", nome: "NOTREDAME"},
+            {id: "1073", nome: "BRADESCO BIOMOL"},
+            {id: "1074", nome: "POLIAME"},
+            {id: "1075", nome: "BRB CITOLAB"},
+            {id: "1076", nome: "BIOCITHO"},
+            {id: "1077", nome: "BACEN AMH"},
+            {id: "1078", nome: "Convênio Não Aceito - Devolução Material"},
+            {id: "1079", nome: "HSF - HOSPITAL SÃO FRANCISCO"},
+            {id: "1080", nome: "GDF-SAÚDE"},
+            {id: "1081", nome: "BRADESCO MEDIGEST"},
+            {id: "1082", nome: "REAL GRANDEZA"},
+            {id: "1083", nome: "MedHealth"},
+            {id: "1084", nome: "SIS SENADO"},
+            {id: "1085", nome: "FUSEX"},
+            {id: "1086", nome: "FUSEX - SAMEx-Cmb"},
+            {id: "1087", nome: "FUSEX - Pass"},
+            {id: "1088", nome: "CBMDF"},
+            {id: "1089", nome: "CENTRO DE DIAGNOSTICO POR IMAGEM DO GAMA LTDA - ME"},
+            {id: "1090", nome: "SULAMERICA - DIAGNOSE"},
+            {id: "1091", nome: "PMDF"},
+            {id: "1092", nome: "HOSPITAL NAVAL"},
+            {id: "1093", nome: "CLUDE SAÚDE"},
+            {id: "1094", nome: "CONSULTORIO DE ENFERMAGEM"},
+            {id: "1095", nome: "PF SAÚDE"},
+            {id: "1096", nome: "PRÓ-SAÚDE"},
+            {id: "1097", nome: "PARTICULAR - CONVERTIDO"},
+            {id: "1098", nome: "CÂMARA DOS DEPUTADOS"},
+            {id: "1099", nome: "REVITALITÉ"},
+            {id: "1100", nome: "NEXUS"},
+            {id: "1101", nome: "ABAC"},
+            {id: "1102", nome: "HOSPITAL BIO VIDAS"},
+            {id: "1103", nome: "MPF - Medicina Laboratorial"},
+            {id: "1104", nome: "SCAMARA-05 - Medicina Laboratorial"},
+            {id: "1105", nome: "GDF SAUDE - Medicina Laboratorial"},
+            {id: "1106", nome: "ASSEFAZ - MEDICINA LABORATORIAL"},
+            {id: "1107", nome: "PMDF - MEDICINA LABORATORIAL"},
+            {id: "1108", nome: "SAÚDE CAIXA - MEDICINA LABORATORIAL"},
+            {id: "1109", nome: "PARTICULAR - MEDICINA LABORATORIAL"},
+            {id: "1110", nome: "STJ- PRO SER - MEDICINA LABORATORIAL"},
+            {id: "1111", nome: "UNIMED"},
+            {id: "1112", nome: "GEAP - MEDICINA LABORATORIAL"},
+            {id: "1115", nome: "CORTESIA - MEDICINA LABORATORIAL"},
+            {id: "1116", nome: "BRADESCO - MEDICINA LABORATORIAL"},
+            {id: "1117", nome: "TJDFT-PRO SAUDE - MEDICINA LABORATORIAL"},
+            {id: "1118", nome: "BACEN - MEDICINA LABORATORIAL"},
+            {id: "1119", nome: "SIS SENADO - MEDICINA LABORATORIAL"},
+            {id: "1120", nome: "HOSPITAL BIO VIDAS - Medicina Laboratorial"},
+            {id: "1121", nome: "PROASA - MEDICINA LABORATORIAL"},
+            {id: "1122", nome: "POSTAL SAUDE - MEDICINA LABOATORIAL"},
+            {id: "1123", nome: "STJ - MEDICINA LABORATORIAL"},
+            {id: "1124", nome: "STJ-PRO SER-MEDICINA LABORATORIAL"},
+            {id: "1125", nome: "GAMA SAÚDE"},
+            {id: "1126", nome: "GAMA SAÚDE - MEDICINA LABORATORIAL"},
+            {id: "1127", nome: "SCAIXA-01 - MEDICINA LABORATORIAL"},
+            {id: "1128", nome: "SERPRO - MEDICINA LABORATORIAL"},
+            {id: "1129", nome: "POLICIA FEDERAL - MEDICINA LABORATORIAL"},
+            {id: "1130", nome: "PF SAUDE - MEDICINA LABORATORIAL"},
+            {id: "1131", nome: "TRT SAUDE - MEDICINA LABORATORIAL"},
+            {id: "1132", nome: "TST SAUDE - MEDICINA LABORATORIAL"},
+            {id: "1133", nome: "STF - MEDICINA LABORATORIAL"},
+            {id: "1134", nome: "FASCAL - MEDICINA LABORATORIAL"}
+        ];
+
+        // Popular dropdown de convênios
+        const selectConvenio = document.getElementById('convenio');
+        convenios.forEach(conv => {
+            const option = document.createElement('option');
+            option.value = conv.nome;
+            option.textContent = conv.nome;
+            selectConvenio.appendChild(option);
+        });
+
+        // Auto-preencher data atual
+        document.getElementById('dataExame').value = new Date().toLocaleDateString('pt-BR');
+
+        // Formatar CPF
+        document.getElementById('cpf').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                e.target.value = value;
+            }
+        });
+
+        // Formatar telefone
+        document.getElementById('telefone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                if (value.length <= 10) {
+                    value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                    value = value.replace(/(\d{4})(\d)/, '$1-$2');
+                } else {
+                    value = value.replace(/(\d{2})(\d)/, '($1) $2');
+                    value = value.replace(/(\d{5})(\d)/, '$1-$2');
+                }
+                e.target.value = value;
+            }
+        });
+
+        // Supabase
+        const SUPABASE_URL = 'https://abzetdlvxjkxwrckfmeu.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFiemV0ZGx2eGpreHdyY2tmbWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNDEzMzksImV4cCI6MjA4ODgxNzMzOX0.chFR5QlTYXh7oL2Pzg9_TY3fw2HBWC9mEFwUpyt2WAI';
+        let supabaseClient = null;
+        const statusEl = document.getElementById('status-conexao');
+
+        try {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            // Testar conexão com a tabela
+            supabaseClient.from('pedidos_medicos').select('id').limit(1).then(({ error }) => {
+                if (error) {
+                    statusEl.innerHTML = '⚠️ Supabase: <b>' + error.message + '</b> — verifique se rodou o SQL de criação da tabela.';
+                    statusEl.style.color = '#ef4444';
+                } else {
+                    statusEl.innerHTML = '🟢 Supabase conectado e tabela <b>pedidos_medicos</b> encontrada.';
+                    statusEl.style.color = '#10b981';
+                }
+            });
+        } catch(e) {
+            statusEl.innerHTML = '❌ Erro ao inicializar Supabase: ' + e.message;
+            statusEl.style.color = '#ef4444';
+        }
+
+        // Captura o pedido médico inteiro como imagem base64
+        async function capturarPedidoBase64() {
+            const botoes = document.querySelector('.botoes');
+            const statusDiv = document.getElementById('status-conexao');
+            botoes.style.display = 'none';
+            statusDiv.style.display = 'none';
+            const canvas = await html2canvas(document.querySelector('.container'), { scale: 2, useCORS: true });
+            botoes.style.display = '';
+            statusDiv.style.display = '';
+            return canvas.toDataURL('image/png');
+        }
+
+        // Coletar dados do formulário
+        function coletarDados(pedidoBase64) {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+            const exames = Array.from(checkboxes).map(cb => {
+                const label = document.querySelector(`label[for="${cb.id}"]`);
+                return label ? label.innerText.trim() : cb.id;
+            }).filter(Boolean);
+
+            return {
+                nome_paciente: document.getElementById('nomePaciente').value,
+                nome_mae: document.getElementById('nomeMae').value,
+                telefone: document.getElementById('telefone').value,
+                cpf: document.getElementById('cpf').value,
+                data_nasc: document.getElementById('dataNasc').value || null,
+                genero: document.getElementById('genero').value,
+                convenio: document.getElementById('convenio').value,
+                inscricao: document.getElementById('inscricao').value,
+                dados_complementares: document.getElementById('dadosComplementares').value,
+                numero_frascos: document.getElementById('numeroFrascos').value || null,
+                exames_selecionados: exames,
+                pedido_base64: pedidoBase64 || null,
+                data_hora_salvamento: new Date().toISOString()
+            };
+        }
+
+        // Salvar no Supabase
+        async function salvarNoSupabase(dados) {
+            if (!supabaseClient) return new Error('Supabase não inicializado');
+            try {
+                const { error } = await supabaseClient.from('pedidos_medicos').insert([dados]);
+                return error;
+            } catch(e) {
+                return e;
+            }
+        }
+
+        // Salvar formulário
+        async function salvarFormulario() {
+            const btn = document.querySelector('.btn-secondary');
+            btn.disabled = true;
+            btn.textContent = '⏳ Capturando...';
+
+            try {
+                const pedidoBase64 = await capturarPedidoBase64();
+                const dados = coletarDados(pedidoBase64);
+                const error = await salvarNoSupabase(dados);
+                if (error) {
+                    alert('⚠️ Erro ao salvar no servidor: ' + error.message);
+                } else {
+                    alert('✅ Pedido médico salvo com sucesso no servidor!');
+                }
+            } catch(e) {
+                alert('⚠️ Erro inesperado: ' + e.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💾 Salvar Dados';
+            }
+        }
+
+        // Imprimir e salvar
+        function imprimirESalvar() {
+            // Após fechar o diálogo de impressão, captura e salva
+            window.onafterprint = async function() {
+                window.onafterprint = null; // evita disparar múltiplas vezes
+                statusEl.innerHTML = '⏳ Salvando pedido no servidor...';
+                statusEl.style.color = 'var(--warning)';
+                try {
+                    const pedidoBase64 = await capturarPedidoBase64();
+                    const dados = coletarDados(pedidoBase64);
+                    const error = await salvarNoSupabase(dados);
+                    if (error) {
+                        statusEl.innerHTML = '⚠️ Erro ao salvar: ' + error.message;
+                        statusEl.style.color = '#ef4444';
+                    } else {
+                        statusEl.innerHTML = '✅ Pedido salvo no servidor após impressão!';
+                        statusEl.style.color = '#10b981';
+                    }
+                } catch(e) {
+                    statusEl.innerHTML = '⚠️ Erro: ' + e.message;
+                    statusEl.style.color = '#ef4444';
+                }
+            };
+            window.print();
+        }
+
+        // Limpar formulário
+        function limparFormulario() {
+            if (confirm('Tem certeza que deseja limpar todos os campos?')) {
+                document.querySelectorAll('input[type="text"], input[type="date"], input[type="tel"], textarea').forEach(el => el.value = '');
+                document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+                document.getElementById('dataExame').value = new Date().toLocaleDateString('pt-BR');
+                document.getElementById('assinaturaMedico').textContent = '';
+                document.getElementById('infoMedicoAssinatura').textContent = '';
+                alert('✅ Formulário limpo!');
+            }
+        }
+    </script>
+</body>
+</html>
