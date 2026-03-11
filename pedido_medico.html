@@ -606,15 +606,29 @@
             }
 
             .assinaturas {
-                margin-bottom: 4px;
-                gap: 10px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 30px;
+                margin-bottom: 6px;
             }
 
-            .assinatura-linha { min-height: 55px; }
-            .assinatura-label { font-size: 9px; }
-            .assinatura-sublabel { font-size: 8px; }
+            .assinatura-box {
+                text-align: center;
+            }
+
+            .assinatura-linha {
+                min-height: 60px;
+                border-bottom: 1.5px solid #000;
+                margin-bottom: 4px;
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                padding-bottom: 4px;
+            }
+
+            .assinatura-label { font-size: 9px; font-weight: 700; }
+            .assinatura-sublabel { font-size: 7.5px; }
             .assinatura-medico-display { font-size: 22px; }
-            .assinaturas { gap: 30px; margin-bottom: 6px; }
 
             .medicos-info {
                 padding: 4px 7px;
