@@ -22,7 +22,7 @@ git commit -m "%MSG%"
 
 echo [3/3] Enviando para o GitHub e Vercel...
 git push
-npx vercel --prod
+
 
 echo.
 echo ========================================
