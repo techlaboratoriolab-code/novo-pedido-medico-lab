@@ -683,7 +683,7 @@
 
         <!-- Dados do Paciente -->
         <div class="dados-paciente">
-            <div class="obrigatorio-info">* Campos obrigatórios</div>
+            <div class="obrigatorio-info">* Campos obrigatórios (Mãe obrigatória apenas para menores de 18 anos)</div>
             <div class="form-row">
                 <div class="form-field" style="flex: 1;">
                     <label>Nome:<span class="required-marker">*</span></label>
@@ -692,8 +692,8 @@
             </div>
             <div class="form-row">
                 <div class="form-field" style="flex: 2;">
-                    <label>Mãe:<span class="required-marker">*</span></label>
-                    <input type="text" id="nomeMae" required>
+                    <label>Mãe:<span class="required-marker" id="markerMae" style="display: none;">*</span></label>
+                    <input type="text" id="nomeMae">
                 </div>
                 <div class="form-field" style="flex: 1;">
                     <label>Fone:<span class="required-marker">*</span></label>
@@ -1220,9 +1220,8 @@
         // Auto-preencher data atual
         document.getElementById('dataExame').value = new Date().toLocaleDateString('pt-BR');
 
-        const camposPacienteObrigatorios = [
+        const camposPacienteObrigatoriosFixos = [
             'nomePaciente',
-            'nomeMae',
             'telefone',
             'cpf',
             'dataNasc',
@@ -1231,11 +1230,57 @@
             'inscricao'
         ];
 
+        function calcularIdade(dataNasc) {
+            if (!dataNasc) return null;
+            const nascimento = new Date(dataNasc + 'T00:00:00');
+            if (Number.isNaN(nascimento.getTime())) return null;
+
+            const hoje = new Date();
+            let idade = hoje.getFullYear() - nascimento.getFullYear();
+            const mesAtual = hoje.getMonth();
+            const mesNascimento = nascimento.getMonth();
+
+            if (mesAtual < mesNascimento || (mesAtual === mesNascimento && hoje.getDate() < nascimento.getDate())) {
+                idade--;
+            }
+
+            return idade;
+        }
+
+        function maeEhObrigatoria() {
+            const dataNasc = document.getElementById('dataNasc')?.value;
+            const idade = calcularIdade(dataNasc);
+            return idade !== null && idade < 18;
+        }
+
+        function atualizarObrigatoriedadeMae() {
+            const inputMae = document.getElementById('nomeMae');
+            const markerMae = document.getElementById('markerMae');
+            const obrigatoria = maeEhObrigatoria();
+
+            if (inputMae) {
+                inputMae.required = obrigatoria;
+            }
+
+            if (markerMae) {
+                markerMae.style.display = obrigatoria ? 'inline' : 'none';
+            }
+        }
+
         function dadosPacientePreenchidos() {
-            return camposPacienteObrigatorios.every((id) => {
+            const camposFixosPreenchidos = camposPacienteObrigatoriosFixos.every((id) => {
                 const el = document.getElementById(id);
                 return el && el.value && el.value.trim() !== '';
             });
+
+            if (!camposFixosPreenchidos) return false;
+
+            if (maeEhObrigatoria()) {
+                const nomeMae = document.getElementById('nomeMae');
+                return !!(nomeMae && nomeMae.value && nomeMae.value.trim() !== '');
+            }
+
+            return true;
         }
 
         function atualizarEstadoAcoesObrigatorias() {
@@ -1251,7 +1296,7 @@
         }
 
         function validarDadosPacienteObrigatorios(mostrarAlerta = true) {
-            for (const id of camposPacienteObrigatorios) {
+            for (const id of camposPacienteObrigatoriosFixos) {
                 const el = document.getElementById(id);
                 const valor = el?.value?.trim() || '';
                 if (!valor) {
@@ -1262,14 +1307,33 @@
                     return false;
                 }
             }
+
+            if (maeEhObrigatoria()) {
+                const elMae = document.getElementById('nomeMae');
+                const valorMae = elMae?.value?.trim() || '';
+                if (!valorMae) {
+                    if (mostrarAlerta) {
+                        alert('Para pacientes menores de 18 anos, o campo Mãe é obrigatório.');
+                    }
+                    elMae?.focus();
+                    return false;
+                }
+            }
+
             return true;
         }
 
-        camposPacienteObrigatorios.forEach((id) => {
+        [...camposPacienteObrigatoriosFixos, 'nomeMae'].forEach((id) => {
             const el = document.getElementById(id);
             if (el) {
-                el.addEventListener('input', atualizarEstadoAcoesObrigatorias);
-                el.addEventListener('change', atualizarEstadoAcoesObrigatorias);
+                el.addEventListener('input', () => {
+                    atualizarObrigatoriedadeMae();
+                    atualizarEstadoAcoesObrigatorias();
+                });
+                el.addEventListener('change', () => {
+                    atualizarObrigatoriedadeMae();
+                    atualizarEstadoAcoesObrigatorias();
+                });
             }
         });
 
@@ -1450,6 +1514,7 @@
             }
         }
 
+        atualizarObrigatoriedadeMae();
         atualizarEstadoAcoesObrigatorias();
     </script>
 </body>
