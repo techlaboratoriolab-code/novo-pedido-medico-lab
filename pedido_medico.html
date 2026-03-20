@@ -1724,10 +1724,25 @@
 
             carregamentoMedicosPromise = (async () => {
                 try {
-                    const resposta = await fetch('./medicos_extraidos_20260120_155027.csv', { cache: 'no-store' });
-                    if (!resposta.ok) throw new Error('Falha ao carregar CSV de médicos');
-                    const textoCsv = await resposta.text();
-                    const listaCsv = parseCsvMedicos(textoCsv);
+                    const caminhosCsv = [
+                        '/medicos_extraidos_20260120_155027.csv',
+                        './medicos_extraidos_20260120_155027.csv'
+                    ];
+
+                    let listaCsv = [];
+                    for (const caminho of caminhosCsv) {
+                        try {
+                            const resposta = await fetch(caminho, { cache: 'no-store' });
+                            if (!resposta.ok) continue;
+                            const textoCsv = await resposta.text();
+                            const listaParseada = parseCsvMedicos(textoCsv);
+                            if (listaParseada.length > 0) {
+                                listaCsv = listaParseada;
+                                break;
+                            }
+                        } catch (erroCaminho) {
+                        }
+                    }
 
                     if (listaCsv.length > 0) {
                         medicos = gerarListaMedicosComLogin(listaCsv);
@@ -1827,7 +1842,8 @@
             let medicoEncontrado = medicos.find((medico) => medico.login === loginDigitado);
 
             if (!medicoEncontrado) {
-                alert('Médico não encontrado no CSV de médicos extraídos. Verifique o login no padrão primeiroNome.lab.');
+                const exemplos = medicos.slice(0, 4).map((m) => m.login).join(', ');
+                alert(`Médico não encontrado. Verifique o login no padrão primeiroNome.lab. Ex.: ${exemplos}`);
                 return;
             }
 
