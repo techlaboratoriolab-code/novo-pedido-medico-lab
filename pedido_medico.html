@@ -129,6 +129,33 @@
             font-weight: 700;
         }
 
+        .login-medico {
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            background: var(--bg-subtle);
+        }
+
+        .login-medico-titulo {
+            font-weight: 700;
+            font-size: 11px;
+            margin-bottom: 6px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+        }
+
+        .login-medico .form-row {
+            margin-bottom: 6px;
+        }
+
+        .login-status {
+            font-size: 10.5px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
         .form-row {
             display: flex;
             gap: 10px;
@@ -681,6 +708,27 @@
         <!-- Título -->
         <div class="titulo">Pedido Médico</div>
 
+        <div class="login-medico">
+            <div class="login-medico-titulo">Login do Médico</div>
+            <div class="form-row">
+                <div class="form-field" style="flex: 1.2;">
+                    <label>Login:</label>
+                    <input type="text" id="loginMedico" placeholder="ex.: guido.lab">
+                </div>
+                <div class="form-field" style="flex: 1;">
+                    <label>Senha:</label>
+                    <input type="password" id="senhaMedico" placeholder="Senha padrão">
+                </div>
+                <div class="form-field" style="flex: 0.8;">
+                    <button type="button" class="btn-secondary" id="btnEntrarMedico" onclick="entrarMedico()" style="height: 36px; width: 100%;">Entrar</button>
+                </div>
+                <div class="form-field" style="flex: 0.8;">
+                    <button type="button" class="btn-tertiary" id="btnSairMedico" onclick="sairMedico()" style="height: 36px; width: 100%;" disabled>Sair</button>
+                </div>
+            </div>
+            <div id="loginStatus" class="login-status">🔒 Faça login para habilitar salvar e imprimir.</div>
+        </div>
+
         <!-- Dados do Paciente -->
         <div class="dados-paciente">
             <div class="obrigatorio-info">* Campos obrigatórios (Mãe obrigatória apenas para menores de 18 anos)</div>
@@ -1220,6 +1268,131 @@
         // Auto-preencher data atual
         document.getElementById('dataExame').value = new Date().toLocaleDateString('pt-BR');
 
+        const SENHA_PADRAO_MEDICO = '12345678';
+        const loginStatusEl = document.getElementById('loginStatus');
+        const btnEntrarMedico = document.getElementById('btnEntrarMedico');
+        const btnSairMedico = document.getElementById('btnSairMedico');
+        const loginMedicoInput = document.getElementById('loginMedico');
+        const senhaMedicoInput = document.getElementById('senhaMedico');
+        let medicoLogado = null;
+
+        const medicosBase = [
+            { nome: 'Décio Fausto Gorini', crm: 'CRM DF 1768 RQE 925' },
+            { nome: 'Aline Marques dos Santos', crm: 'CRM-DF 15109 RQE: 12803' },
+            { nome: 'Thiago José Fernandes', crm: 'CRM DF 1768 RQE 9729' },
+            { nome: 'Aline de Fátima Filha Santos', crm: 'CRM-DF 22785 RQE: 17678' }
+        ];
+
+        function normalizarTexto(texto) {
+            return (texto || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase();
+        }
+
+        function gerarLoginDoMedico(nome, indice, usados) {
+            const primeiroNome = normalizarTexto(nome).split(' ').filter(Boolean)[0] || `medico${indice + 1}`;
+            let login = `${primeiroNome}.lab`;
+            let sequencia = 2;
+            while (usados.has(login)) {
+                login = `${primeiroNome}${sequencia}.lab`;
+                sequencia++;
+            }
+            usados.add(login);
+            return login;
+        }
+
+        const loginsUsados = new Set();
+        const medicos = medicosBase.map((medico, indice) => ({
+            ...medico,
+            login: gerarLoginDoMedico(medico.nome, indice, loginsUsados)
+        }));
+
+        function atualizarVisualMedicoLogado() {
+            const assinaturaMedicoEl = document.getElementById('assinaturaMedico');
+            const infoMedicoAssinaturaEl = document.getElementById('infoMedicoAssinatura');
+
+            if (medicoLogado) {
+                assinaturaMedicoEl.textContent = medicoLogado.nome;
+                infoMedicoAssinaturaEl.textContent = medicoLogado.crm;
+                loginStatusEl.textContent = `✅ Logado como ${medicoLogado.login}`;
+                btnEntrarMedico.disabled = true;
+                btnSairMedico.disabled = false;
+                loginMedicoInput.disabled = true;
+                senhaMedicoInput.disabled = true;
+            } else {
+                assinaturaMedicoEl.textContent = '';
+                infoMedicoAssinaturaEl.textContent = '';
+                loginStatusEl.textContent = '🔒 Faça login para habilitar salvar e imprimir.';
+                btnEntrarMedico.disabled = false;
+                btnSairMedico.disabled = true;
+                loginMedicoInput.disabled = false;
+                senhaMedicoInput.disabled = false;
+            }
+        }
+
+        function validarMedicoLogado(mostrarAlerta = true) {
+            if (medicoLogado) return true;
+            if (mostrarAlerta) {
+                alert('Faça login do médico para salvar ou imprimir o pedido.');
+                loginMedicoInput.focus();
+            }
+            return false;
+        }
+
+        function entrarMedico() {
+            const loginDigitado = (loginMedicoInput.value || '').trim().toLowerCase();
+            const senhaDigitada = (senhaMedicoInput.value || '').trim();
+
+            if (!loginDigitado || !senhaDigitada) {
+                alert('Informe login e senha do médico.');
+                return;
+            }
+
+            if (senhaDigitada !== SENHA_PADRAO_MEDICO) {
+                alert('Senha inválida. Use a senha padrão cadastrada para os médicos.');
+                return;
+            }
+
+            let medicoEncontrado = medicos.find((medico) => medico.login === loginDigitado);
+
+            if (!medicoEncontrado) {
+                const formatoLoginValido = /^[a-z0-9]+\.lab$/.test(loginDigitado);
+                if (!formatoLoginValido) {
+                    alert('Login inválido. Use o padrão primeiroNome.lab.');
+                    return;
+                }
+
+                const primeiroNome = loginDigitado.replace('.lab', '');
+                const nomeFormatado = primeiroNome.charAt(0).toUpperCase() + primeiroNome.slice(1);
+                medicoEncontrado = {
+                    nome: nomeFormatado,
+                    crm: 'CRM não informado',
+                    login: loginDigitado
+                };
+            }
+
+            medicoLogado = medicoEncontrado;
+            atualizarVisualMedicoLogado();
+            atualizarEstadoAcoesObrigatorias();
+        }
+
+        function sairMedico() {
+            medicoLogado = null;
+            senhaMedicoInput.value = '';
+            atualizarVisualMedicoLogado();
+            atualizarEstadoAcoesObrigatorias();
+        }
+
+        [loginMedicoInput, senhaMedicoInput].forEach((el) => {
+            el.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    entrarMedico();
+                }
+            });
+        });
+
         const camposPacienteObrigatoriosFixos = [
             'nomePaciente',
             'telefone',
@@ -1286,7 +1459,7 @@
         function atualizarEstadoAcoesObrigatorias() {
             const btnImprimirSalvar = document.getElementById('btnImprimirSalvar');
             const btnSalvarDados = document.getElementById('btnSalvarDados');
-            const habilitarAcoes = dadosPacientePreenchidos();
+            const habilitarAcoes = dadosPacientePreenchidos() && !!medicoLogado;
             if (btnImprimirSalvar) {
                 btnImprimirSalvar.disabled = !habilitarAcoes;
             }
@@ -1415,6 +1588,9 @@
                 genero: document.getElementById('genero').value,
                 convenio: document.getElementById('convenio').value,
                 inscricao: document.getElementById('inscricao').value,
+                medico_login: medicoLogado?.login || null,
+                medico_nome: medicoLogado?.nome || null,
+                medico_crm: medicoLogado?.crm || null,
                 dados_complementares: document.getElementById('dadosComplementares').value,
                 numero_frascos: document.getElementById('numeroFrascos').value || null,
                 exames_selecionados: exames,
@@ -1436,6 +1612,11 @@
 
         // Salvar formulário
         async function salvarFormulario() {
+            if (!validarMedicoLogado()) {
+                atualizarEstadoAcoesObrigatorias();
+                return;
+            }
+
             if (!validarDadosPacienteObrigatorios()) {
                 atualizarEstadoAcoesObrigatorias();
                 return;
@@ -1464,6 +1645,11 @@
 
         // Imprimir e salvar
         function imprimirESalvar() {
+            if (!validarMedicoLogado()) {
+                atualizarEstadoAcoesObrigatorias();
+                return;
+            }
+
             if (!validarDadosPacienteObrigatorios()) {
                 atualizarEstadoAcoesObrigatorias();
                 return;
@@ -1507,13 +1693,13 @@
                 document.querySelectorAll('input[type="text"], input[type="date"], input[type="tel"], textarea').forEach(el => el.value = '');
                 document.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
                 document.getElementById('dataExame').value = new Date().toLocaleDateString('pt-BR');
-                document.getElementById('assinaturaMedico').textContent = '';
-                document.getElementById('infoMedicoAssinatura').textContent = '';
+                atualizarVisualMedicoLogado();
                 atualizarEstadoAcoesObrigatorias();
                 alert('✅ Formulário limpo!');
             }
         }
 
+        atualizarVisualMedicoLogado();
         atualizarObrigatoriedadeMae();
         atualizarEstadoAcoesObrigatorias();
     </script>

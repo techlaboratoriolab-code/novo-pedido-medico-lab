@@ -12,6 +12,9 @@ CREATE TABLE IF NOT EXISTS pedidos_medicos (
     genero TEXT,
     convenio TEXT,
     inscricao TEXT,
+    medico_login TEXT,
+    medico_nome TEXT,
+    medico_crm TEXT,
     dados_complementares TEXT,
     numero_frascos TEXT,
     exames_selecionados TEXT[],
@@ -34,3 +37,8 @@ CREATE POLICY "Allow insert for all" ON pedidos_medicos
 
 -- Se a tabela JÁ EXISTIA antes, rode só esta linha para adicionar a coluna:
 -- ALTER TABLE pedidos_medicos ADD COLUMN IF NOT EXISTS pedido_base64 TEXT;
+
+-- Se a tabela JÁ EXISTIA antes, rode também estas linhas para metadados do médico:
+ALTER TABLE pedidos_medicos ADD COLUMN IF NOT EXISTS medico_login TEXT;
+ALTER TABLE pedidos_medicos ADD COLUMN IF NOT EXISTS medico_nome TEXT;
+ALTER TABLE pedidos_medicos ADD COLUMN IF NOT EXISTS medico_crm TEXT;
