@@ -1052,8 +1052,8 @@
             <div class="login-medico-subtitulo">Faça login para continuar</div>
             <div class="login-medico-campos">
                 <div class="form-field">
-                    <label>Login Do Médico</label>
-                    <input type="text" id="loginMedico" placeholder="MEDICO.LAB">
+                    <label>Login / Nome / CRM do(a) Médico(a)</label>
+                    <input type="text" id="loginMedico" placeholder="ex.: maria.lab, nome completo ou CRM">
                 </div>
                 <div class="form-field">
                     <label>Senha</label>
@@ -1822,7 +1822,8 @@
         }
 
         async function entrarMedico() {
-            const loginDigitado = (loginMedicoInput.value || '').trim().toLowerCase();
+            const credencialDigitada = (loginMedicoInput.value || '').trim();
+            const loginDigitado = credencialDigitada.toLowerCase();
             const senhaDigitada = (senhaMedicoInput.value || '').trim();
 
             if (!loginDigitado || !senhaDigitada) {
@@ -1839,11 +1840,20 @@
                 await carregarMedicosDoCsv();
             }
 
-            let medicoEncontrado = medicos.find((medico) => medico.login === loginDigitado);
+            const credencialNormalizada = normalizarTexto(credencialDigitada);
+            const credencialNumerica = credencialDigitada.replace(/\D/g, '');
+
+            let medicoEncontrado = medicos.find((medico) => {
+                const loginCorresponde = medico.login === loginDigitado;
+                const nomeCorresponde = normalizarTexto(medico.nome) === credencialNormalizada;
+                const crmCorrespondeTexto = normalizarTexto(medico.crm) === credencialNormalizada;
+                const crmCorrespondeNumero = (medico.crm || '').replace(/\D/g, '') === credencialNumerica;
+                return loginCorresponde || nomeCorresponde || crmCorrespondeTexto || crmCorrespondeNumero;
+            });
 
             if (!medicoEncontrado) {
                 const exemplos = medicos.slice(0, 4).map((m) => m.login).join(', ');
-                alert(`Médico não encontrado. Verifique o login no padrão primeiroNome.lab. Ex.: ${exemplos}`);
+                alert(`Médico não encontrado. Você pode entrar com login (${exemplos}), nome completo ou CRM.`);
                 return;
             }
 
