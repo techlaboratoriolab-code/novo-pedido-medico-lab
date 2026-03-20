@@ -38,9 +38,79 @@
         body {
             font-family: 'Inter', Arial, sans-serif;
             background: #e2e8f0;
-            padding: 24px;
+            margin: 0;
+            padding: 0;
             font-size: 12px;
             color: var(--text);
+            overflow-x: hidden;
+        }
+
+        .tela-login-inicial {
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                radial-gradient(circle at 18% 40%, rgba(14, 165, 233, 0.14) 0%, rgba(14, 165, 233, 0) 38%),
+                radial-gradient(circle at 84% 62%, rgba(59, 130, 246, 0.18) 0%, rgba(59, 130, 246, 0) 42%),
+                linear-gradient(120deg, #020817 0%, #0f172a 45%, #1e3a8a 100%);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tela-login-inicial::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(148, 163, 184, 0.10) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(148, 163, 184, 0.10) 1px, transparent 1px);
+            background-size: 52px 52px;
+            pointer-events: none;
+        }
+
+        .card-login-inicial {
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid rgba(96, 165, 250, 0.24);
+            border-radius: 24px;
+            box-shadow: 0 24px 56px rgba(2, 6, 23, 0.62);
+            padding: 28px 24px 20px;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(17, 24, 39, 0.88) 100%);
+            backdrop-filter: blur(8px);
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-login-inicial::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 24px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(59,130,246,0.45), rgba(14,165,233,0.18), rgba(59,130,246,0.45));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .login-logo {
+            width: 84px;
+            height: 84px;
+            margin: 0 auto 18px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            font-weight: 700;
+            color: #dbeafe;
+            border: 3px solid rgba(219, 234, 254, 0.95);
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.16), 0 10px 20px rgba(37, 99, 235, 0.28);
         }
 
         .container {
@@ -53,14 +123,19 @@
             border: 1px solid #e2e8f0;
         }
 
+        #pedidoContainer {
+            margin: 24px auto;
+        }
+
         /* Cabeçalho */
         .header {
             display: flex;
-            justify-content: flex-start;
-            align-items: center;
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 10px;
             padding-bottom: 8px;
             border-bottom: 2.5px solid var(--primary);
+            gap: 10px;
         }
 
         .logo-section {
@@ -132,28 +207,267 @@
         .login-medico {
             border: 1.5px solid var(--border);
             border-radius: var(--radius);
-            padding: 8px 10px;
-            margin-bottom: 8px;
-            background: var(--bg-subtle);
+            padding: 14px;
+            margin-bottom: 10px;
+            background: var(--white);
+            box-shadow: 0 6px 20px rgba(30, 41, 59, 0.08);
         }
 
         .login-medico-titulo {
             font-weight: 700;
-            font-size: 11px;
+            font-size: 34px;
             margin-bottom: 6px;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.2px;
+            color: #93c5fd;
+            text-transform: none;
+            letter-spacing: -0.4px;
+            text-align: center;
+            line-height: 1;
         }
 
-        .login-medico .form-row {
-            margin-bottom: 6px;
+        .login-medico-subtitulo {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 18px;
+            opacity: 0.95;
+        }
+
+        .login-medico-campos .form-field label {
+            color: #cbd5e1;
+            font-size: 11px;
+            letter-spacing: 0.2px;
+            text-transform: none;
+        }
+
+        .login-medico-campos {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card-login-inicial .form-field {
+            margin-bottom: 0;
+        }
+
+        .card-login-inicial input[type="text"],
+        .card-login-inicial input[type="password"] {
+            height: 46px;
+            border: 1px solid rgba(59, 130, 246, 0.30);
+            border-radius: 12px;
+            padding: 0 14px;
+            font-size: 14px;
+            background: rgba(15, 23, 42, 0.75);
+            color: #e2e8f0;
+            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+        }
+
+        .card-login-inicial input[type="text"]:focus,
+        .card-login-inicial input[type="password"]:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.20);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .login-medico input::placeholder {
+            color: #64748b;
+        }
+
+        .login-medico-acoes {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-login {
+            height: 48px;
+            width: 100%;
+            padding: 0 16px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 18px;
+            letter-spacing: 0;
+            background: linear-gradient(90deg, #1d4ed8 0%, #4338ca 100%);
+            color: #e2e8f0;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.3);
+            transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.06);
+            box-shadow: 0 14px 30px rgba(37, 99, 235, 0.36);
+        }
+
+        #btnSairMedico {
+            display: none;
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .login-status {
-            font-size: 10.5px;
-            color: var(--text-muted);
-            margin-top: 4px;
+            font-size: 12px;
+            color: #93c5fd;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(59, 130, 246, 0.2);
+            text-align: center;
+        }
+
+        .medico-logado-barra,
+        .medico-conectado-barra,
+        .medico-Conectado-barra {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 0;
+            padding: 9px 11px;
+            border: 1px solid #c7d2fe;
+            border-radius: 16px;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            box-shadow: 0 12px 30px rgba(30, 64, 175, 0.16);
+            font-size: 12px;
+            color: var(--text);
+            line-height: 1.3;
+            flex-shrink: 0;
+        }
+
+        .medico-conectado-externo {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            z-index: 20;
+            min-width: 380px;
+            max-width: 480px;
+        }
+
+        .medico-usuario-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .medico-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 11px;
+            font-weight: 700;
+            color: #eff6ff;
+            background: linear-gradient(135deg, #2563eb 0%, #4338ca 100%);
+            border: 1px solid #a5b4fc;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.16);
+        }
+
+        .medico-usuario-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            gap: 1px;
+        }
+
+        .medico-usuario-status {
+            font-size: 9.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.55px;
+            color: #475569;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .medico-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #22c55e;
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.16);
+            flex-shrink: 0;
+        }
+
+        #medicoLogadoNome {
+            max-width: 340px;
+            font-weight: 700;
+            color: #1e3a8a;
+            letter-spacing: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #medicoLogadoCrm {
+            font-size: 11px;
+            color: #64748b;
+            max-width: 340px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .btn-trocar-medico {
+            flex: 0 0 auto;
+            background: #f8fafc;
+            color: #1e3a8a;
+            border: 1px solid #c7d2fe;
+            border-radius: 9px;
+            padding: 6px 11px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: 'Inter', Arial, sans-serif;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-trocar-medico:hover {
+            background: #eef2ff;
+            border-color: #818cf8;
+            color: #1e3a8a;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 900px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .medico-logado-barra,
+            .medico-conectado-barra,
+            .medico-Conectado-barra {
+                justify-content: space-between;
+            }
+
+            #medicoLogadoNome,
+            #medicoLogadoCrm {
+                max-width: none;
+            }
+
+            .medico-conectado-externo {
+                position: static;
+                margin: 10px 12px 0;
+                min-width: 0;
+                max-width: none;
+            }
+
+            #medicoLogadoNome,
+            #medicoLogadoCrm {
+                max-width: 100%;
+            }
         }
 
         .form-row {
@@ -232,6 +546,7 @@
             border-color: var(--primary-mid);
             box-shadow: 0 0 0 3px var(--primary-light);
         }
+
 
         /* Seções de exames */
         .secao {
@@ -409,9 +724,24 @@
         }
 
         .assinatura-medico-display {
-            font-family: 'Brush Script MT', cursive;
-            font-size: 30px;
-            color: var(--primary);
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 12px;
+            color: var(--text);
+            font-weight: 600;
+            line-height: 1.35;
+            text-align: center;
+        }
+
+        .assinatura-medico-nome {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .assinatura-medico-crm {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-weight: 600;
         }
 
         .assinatura-label {
@@ -532,6 +862,10 @@
 
             .botoes { display: none; }
             #status-conexao { display: none; }
+            .medico-logado-barra,
+            .medico-conectado-barra,
+            .medico-Conectado-barra,
+            .medico-conectado-externo { display: none; }
 
             .container {
                 box-shadow: none;
@@ -677,7 +1011,9 @@
 
             .assinatura-label { font-size: 9px; font-weight: 700; }
             .assinatura-sublabel { font-size: 7.5px; }
-            .assinatura-medico-display { font-size: 22px; }
+            .assinatura-medico-display { font-size: 10px; }
+            .assinatura-medico-nome { font-size: 10px; }
+            .assinatura-medico-crm { font-size: 8px; }
 
             .medicos-info {
                 padding: 4px 7px;
@@ -697,7 +1033,41 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="medico-conectado-barra medico-conectado-externo" id="medicoConectadoExterno" style="display: none;">
+        <div class="medico-usuario-top">
+            <div class="medico-avatar" id="medicoAvatar">MD</div>
+            <div class="medico-usuario-info">
+                <span class="medico-usuario-status"><span class="medico-status-dot"></span>Médico(a) conectado(a)</span>
+                <span id="medicoLogadoNome">Nenhum médico conectado.</span>
+                <span id="medicoLogadoCrm"></span>
+            </div>
+        </div>
+        <button type="button" class="btn-trocar-medico" onclick="sairMedico()">Trocar médico</button>
+    </div>
+
+    <div id="telaLoginInicial" class="tela-login-inicial">
+        <div class="card-login-inicial">
+            <div class="login-logo">LAB</div>
+            <div class="login-medico-titulo">Pedido Médico</div>
+            <div class="login-medico-subtitulo">Faça login para continuar</div>
+            <div class="login-medico-campos">
+                <div class="form-field">
+                    <label>Login Do Médico</label>
+                    <input type="text" id="loginMedico" placeholder="MEDICO.LAB">
+                </div>
+                <div class="form-field">
+                    <label>Senha</label>
+                    <input type="password" id="senhaMedico" placeholder="••••••••">
+                </div>
+                <div class="login-medico-acoes">
+                    <button type="button" class="btn-secondary btn-login" id="btnEntrarMedico" onclick="entrarMedico()">Entrar</button>
+                </div>
+            </div>
+            <div id="loginStatus" class="login-status">🔒 Faça login para abrir o pedido médico.</div>
+        </div>
+    </div>
+
+    <div class="container" id="pedidoContainer" style="display: none;">
         <!-- Cabeçalho -->
         <div class="header">
             <div class="logo-section">
@@ -707,27 +1077,6 @@
 
         <!-- Título -->
         <div class="titulo">Pedido Médico</div>
-
-        <div class="login-medico">
-            <div class="login-medico-titulo">Login do Médico</div>
-            <div class="form-row">
-                <div class="form-field" style="flex: 1.2;">
-                    <label>Login:</label>
-                    <input type="text" id="loginMedico" placeholder="ex.: guido.lab">
-                </div>
-                <div class="form-field" style="flex: 1;">
-                    <label>Senha:</label>
-                    <input type="password" id="senhaMedico" placeholder="Senha padrão">
-                </div>
-                <div class="form-field" style="flex: 0.8;">
-                    <button type="button" class="btn-secondary" id="btnEntrarMedico" onclick="entrarMedico()" style="height: 36px; width: 100%;">Entrar</button>
-                </div>
-                <div class="form-field" style="flex: 0.8;">
-                    <button type="button" class="btn-tertiary" id="btnSairMedico" onclick="sairMedico()" style="height: 36px; width: 100%;" disabled>Sair</button>
-                </div>
-            </div>
-            <div id="loginStatus" class="login-status">🔒 Faça login para habilitar salvar e imprimir.</div>
-        </div>
 
         <!-- Dados do Paciente -->
         <div class="dados-paciente">
@@ -770,9 +1119,8 @@
             <div class="form-row">
                 <div class="form-field" style="flex: 2;">
                     <label>Convênio:<span class="required-marker">*</span></label>
-                    <select id="convenio" required>
-                        <option value="">Selecione um convênio</option>
-                    </select>
+                    <input type="text" id="convenio" list="listaConvenios" placeholder="Selecione um convênio" required autocomplete="off">
+                    <datalist id="listaConvenios"></datalist>
                 </div>
                 <div class="form-field" style="flex: 1;">
                     <label>Inscrição:<span class="required-marker">*</span></label>
@@ -1256,14 +1604,37 @@
             {id: "1134", nome: "FASCAL - MEDICINA LABORATORIAL"}
         ];
 
-        // Popular dropdown de convênios
-        const selectConvenio = document.getElementById('convenio');
-        convenios.forEach(conv => {
-            const option = document.createElement('option');
-            option.value = conv.nome;
-            option.textContent = conv.nome;
-            selectConvenio.appendChild(option);
+        // Convênio com busca embutida (autocomplete)
+        const convenioInput = document.getElementById('convenio');
+        const listaConveniosEl = document.getElementById('listaConvenios');
+        const conveniosNomesSet = new Set(convenios.map((conv) => conv.nome));
+
+        function renderizarConveniosAutocomplete() {
+            if (!listaConveniosEl) return;
+            listaConveniosEl.innerHTML = '';
+            convenios.forEach((conv) => {
+                const option = document.createElement('option');
+                option.value = conv.nome;
+                listaConveniosEl.appendChild(option);
+            });
+        }
+
+        function convenioEhValido(valor) {
+            return conveniosNomesSet.has((valor || '').trim());
+        }
+
+        convenioInput?.addEventListener('input', () => {
+            atualizarEstadoAcoesObrigatorias();
         });
+
+        convenioInput?.addEventListener('blur', () => {
+            if (convenioInput.value && !convenioEhValido(convenioInput.value)) {
+                convenioInput.value = '';
+            }
+            atualizarEstadoAcoesObrigatorias();
+        });
+
+        renderizarConveniosAutocomplete();
 
         // Auto-preencher data atual
         document.getElementById('dataExame').value = new Date().toLocaleDateString('pt-BR');
@@ -1274,6 +1645,12 @@
         const btnSairMedico = document.getElementById('btnSairMedico');
         const loginMedicoInput = document.getElementById('loginMedico');
         const senhaMedicoInput = document.getElementById('senhaMedico');
+        const telaLoginInicial = document.getElementById('telaLoginInicial');
+        const pedidoContainer = document.getElementById('pedidoContainer');
+        const medicoConectadoExterno = document.getElementById('medicoConectadoExterno');
+        const medicoAvatar = document.getElementById('medicoAvatar');
+        const medicoLogadoNome = document.getElementById('medicoLogadoNome');
+        const medicoLogadoCrm = document.getElementById('medicoLogadoCrm');
         let medicoLogado = null;
 
         const medicosBase = [
@@ -1302,32 +1679,121 @@
             return login;
         }
 
-        const loginsUsados = new Set();
-        const medicos = medicosBase.map((medico, indice) => ({
-            ...medico,
-            login: gerarLoginDoMedico(medico.nome, indice, loginsUsados)
-        }));
+        let medicos = [];
+        let medicosCarregados = false;
+        let carregamentoMedicosPromise = null;
+
+        function gerarListaMedicosComLogin(listaMedicos) {
+            const loginsUsados = new Set();
+            return listaMedicos.map((medico, indice) => ({
+                ...medico,
+                login: gerarLoginDoMedico(medico.nome, indice, loginsUsados)
+            }));
+        }
+
+        function parseCsvMedicos(csvTexto) {
+            const linhas = (csvTexto || '').split(/\r?\n/).filter(Boolean);
+            if (linhas.length <= 1) return [];
+
+            const dados = [];
+            for (let i = 1; i < linhas.length; i++) {
+                const colunas = linhas[i].split(',');
+                if (colunas.length < 4) continue;
+
+                const crmNumero = (colunas[1] || '').trim();
+                const nome = (colunas[2] || '').trim();
+                const crmUf = (colunas[3] || '').trim().toUpperCase();
+
+                if (!nome || !crmNumero) continue;
+
+                dados.push({
+                    nome,
+                    crm: `CRM ${crmUf} ${crmNumero}`
+                });
+            }
+
+            return dados;
+        }
+
+        async function carregarMedicosDoCsv() {
+            if (medicosCarregados) return;
+            if (carregamentoMedicosPromise) {
+                await carregamentoMedicosPromise;
+                return;
+            }
+
+            carregamentoMedicosPromise = (async () => {
+                try {
+                    const resposta = await fetch('./medicos_extraidos_20260120_155027.csv', { cache: 'no-store' });
+                    if (!resposta.ok) throw new Error('Falha ao carregar CSV de médicos');
+                    const textoCsv = await resposta.text();
+                    const listaCsv = parseCsvMedicos(textoCsv);
+
+                    if (listaCsv.length > 0) {
+                        medicos = gerarListaMedicosComLogin(listaCsv);
+                    } else {
+                        medicos = gerarListaMedicosComLogin(medicosBase);
+                    }
+                } catch (error) {
+                    medicos = gerarListaMedicosComLogin(medicosBase);
+                } finally {
+                    medicosCarregados = true;
+                }
+            })();
+
+            await carregamentoMedicosPromise;
+        }
+
+        function obterIniciais(nomeCompleto) {
+            const partes = (nomeCompleto || '').trim().split(/\s+/).filter(Boolean);
+            if (partes.length === 0) return 'MD';
+            if (partes.length === 1) return partes[0].slice(0, 2).toUpperCase();
+            return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+        }
 
         function atualizarVisualMedicoLogado() {
             const assinaturaMedicoEl = document.getElementById('assinaturaMedico');
             const infoMedicoAssinaturaEl = document.getElementById('infoMedicoAssinatura');
 
             if (medicoLogado) {
-                assinaturaMedicoEl.textContent = medicoLogado.nome;
-                infoMedicoAssinaturaEl.textContent = medicoLogado.crm;
+                assinaturaMedicoEl.innerHTML = '';
+                infoMedicoAssinaturaEl.textContent = `${medicoLogado.nome} — ${medicoLogado.crm}`;
                 loginStatusEl.textContent = `✅ Logado como ${medicoLogado.login}`;
+                medicoLogadoNome.textContent = medicoLogado.nome;
+                medicoLogadoCrm.textContent = medicoLogado.crm;
+                if (medicoAvatar) {
+                    medicoAvatar.textContent = obterIniciais(medicoLogado.nome);
+                    medicoAvatar.title = medicoLogado.nome;
+                }
                 btnEntrarMedico.disabled = true;
-                btnSairMedico.disabled = false;
+                if (btnSairMedico) btnSairMedico.disabled = false;
                 loginMedicoInput.disabled = true;
                 senhaMedicoInput.disabled = true;
             } else {
-                assinaturaMedicoEl.textContent = '';
+                assinaturaMedicoEl.innerHTML = '';
                 infoMedicoAssinaturaEl.textContent = '';
-                loginStatusEl.textContent = '🔒 Faça login para habilitar salvar e imprimir.';
+                loginStatusEl.textContent = '🔒 Faça login para abrir o pedido médico.';
+                medicoLogadoNome.textContent = 'Nenhum médico conectado.';
+                medicoLogadoCrm.textContent = '';
+                if (medicoAvatar) {
+                    medicoAvatar.textContent = 'MD';
+                    medicoAvatar.title = 'Médico';
+                }
                 btnEntrarMedico.disabled = false;
-                btnSairMedico.disabled = true;
+                if (btnSairMedico) btnSairMedico.disabled = true;
                 loginMedicoInput.disabled = false;
                 senhaMedicoInput.disabled = false;
+            }
+
+            atualizarVisibilidadeTelaPorLogin();
+        }
+
+        function atualizarVisibilidadeTelaPorLogin() {
+            const logado = !!medicoLogado;
+            telaLoginInicial.style.display = logado ? 'none' : 'flex';
+            pedidoContainer.style.display = logado ? 'block' : 'none';
+            if (medicoConectadoExterno) {
+                medicoConectadoExterno.style.display = logado ? 'flex' : 'none';
             }
         }
 
@@ -1340,7 +1806,7 @@
             return false;
         }
 
-        function entrarMedico() {
+        async function entrarMedico() {
             const loginDigitado = (loginMedicoInput.value || '').trim().toLowerCase();
             const senhaDigitada = (senhaMedicoInput.value || '').trim();
 
@@ -1354,22 +1820,15 @@
                 return;
             }
 
+            if (!medicosCarregados) {
+                await carregarMedicosDoCsv();
+            }
+
             let medicoEncontrado = medicos.find((medico) => medico.login === loginDigitado);
 
             if (!medicoEncontrado) {
-                const formatoLoginValido = /^[a-z0-9]+\.lab$/.test(loginDigitado);
-                if (!formatoLoginValido) {
-                    alert('Login inválido. Use o padrão primeiroNome.lab.');
-                    return;
-                }
-
-                const primeiroNome = loginDigitado.replace('.lab', '');
-                const nomeFormatado = primeiroNome.charAt(0).toUpperCase() + primeiroNome.slice(1);
-                medicoEncontrado = {
-                    nome: nomeFormatado,
-                    crm: 'CRM não informado',
-                    login: loginDigitado
-                };
+                alert('Médico não encontrado no CSV de médicos extraídos. Verifique o login no padrão primeiroNome.lab.');
+                return;
             }
 
             medicoLogado = medicoEncontrado;
@@ -1379,9 +1838,11 @@
 
         function sairMedico() {
             medicoLogado = null;
+            loginMedicoInput.value = '';
             senhaMedicoInput.value = '';
             atualizarVisualMedicoLogado();
             atualizarEstadoAcoesObrigatorias();
+            loginMedicoInput.focus();
         }
 
         [loginMedicoInput, senhaMedicoInput].forEach((el) => {
@@ -1448,6 +1909,9 @@
 
             if (!camposFixosPreenchidos) return false;
 
+            const convenioValor = document.getElementById('convenio')?.value || '';
+            if (!convenioEhValido(convenioValor)) return false;
+
             if (maeEhObrigatoria()) {
                 const nomeMae = document.getElementById('nomeMae');
                 return !!(nomeMae && nomeMae.value && nomeMae.value.trim() !== '');
@@ -1479,6 +1943,15 @@
                     el?.focus();
                     return false;
                 }
+            }
+
+            const convenioValor = document.getElementById('convenio')?.value || '';
+            if (!convenioEhValido(convenioValor)) {
+                if (mostrarAlerta) {
+                    alert('Selecione um convênio válido na lista de sugestões.');
+                }
+                document.getElementById('convenio')?.focus();
+                return false;
             }
 
             if (maeEhObrigatoria()) {
@@ -1702,6 +2175,7 @@
         atualizarVisualMedicoLogado();
         atualizarObrigatoriedadeMae();
         atualizarEstadoAcoesObrigatorias();
+        carregarMedicosDoCsv();
     </script>
 </body>
 </html>
