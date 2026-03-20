@@ -4,7 +4,6 @@
 __pycache__
 *.py
 *.pdf
-*.csv
 PERSONALIZACAO.md
 README.md
 supabase_schema.sql
