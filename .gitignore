@@ -1,1 +1,25 @@
 .vercel
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Virtual environments
+.venv/
+.venv-1/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Local/editor
+.vscode/
+
+# Sensitive/generated local data
+*.pdf
+*_extraidos_*.csv
+
+# OS files
+Thumbs.db
+Desktop.ini

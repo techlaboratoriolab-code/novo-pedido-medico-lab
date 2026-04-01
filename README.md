@@ -116,6 +116,18 @@ Este é um formulário digital que replica EXATAMENTE o modelo físico de requis
 
 ## 🚀 Como Usar
 
+## 🔧 Configuração de Ambiente (Vercel)
+
+Para não deixar a chave no HTML, o projeto agora lê do ambiente via `/api/config`.
+
+1. No Vercel, configure as variáveis:
+   - `SUPABASE_URL`
+   - `SUPABASE_ANON_KEY`
+2. Faça novo deploy.
+3. Localmente, use o arquivo `.env.example` como base para criar seu `.env`.
+
+> Importante: use somente chave `anon` no frontend. Nunca exponha `service_role`.
+
 ### Passo 1: Abrir o Formulário
 - Abra o arquivo `pedido_medico.html` em qualquer navegador
 - Chrome, Firefox, Edge ou Safari

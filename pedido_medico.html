@@ -2036,15 +2036,24 @@
         });
 
         // Supabase
-        const SUPABASE_URL = 'https://abzetdlvxjkxwrckfmeu.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFiemV0ZGx2eGpreHdyY2tmbWV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNDEzMzksImV4cCI6MjA4ODgxNzMzOX0.chFR5QlTYXh7oL2Pzg9_TY3fw2HBWC9mEFwUpyt2WAI';
         let supabaseClient = null;
         const statusEl = document.getElementById('status-conexao');
 
-        try {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            // Testar conexão com a tabela
-            supabaseClient.from('pedidos_medicos').select('id').limit(1).then(({ error }) => {
+        async function inicializarSupabase() {
+            try {
+                statusEl.innerHTML = '⏳ Carregando configuração do servidor...';
+                statusEl.style.color = 'var(--warning)';
+
+                const response = await fetch('/api/config', { cache: 'no-store' });
+                const config = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(config?.error || 'Falha ao carregar configuração do Supabase');
+                }
+
+                supabaseClient = window.supabase.createClient(config.supabaseUrl, config.supabaseAnonKey);
+
+                const { error } = await supabaseClient.from('pedidos_medicos').select('id').limit(1);
                 if (error) {
                     statusEl.innerHTML = '⚠️ Supabase: <b>' + error.message + '</b> — verifique se rodou o SQL de criação da tabela.';
                     statusEl.style.color = '#ef4444';
@@ -2052,10 +2061,10 @@
                     statusEl.innerHTML = '🟢 Supabase conectado e tabela <b>pedidos_medicos</b> encontrada.';
                     statusEl.style.color = '#10b981';
                 }
-            });
-        } catch(e) {
-            statusEl.innerHTML = '❌ Erro ao inicializar Supabase: ' + e.message;
-            statusEl.style.color = '#ef4444';
+            } catch (e) {
+                statusEl.innerHTML = '❌ Erro ao inicializar Supabase: ' + e.message;
+                statusEl.style.color = '#ef4444';
+            }
         }
 
         // Captura o pedido médico inteiro como imagem base64
@@ -2201,6 +2210,7 @@
         atualizarVisualMedicoLogado();
         atualizarObrigatoriedadeMae();
         atualizarEstadoAcoesObrigatorias();
+        inicializarSupabase();
         carregarMedicosDoCsv();
     </script>
 </body>
