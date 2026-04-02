@@ -19,6 +19,7 @@ __pycache__/
 # Sensitive/generated local data
 *.pdf
 *_extraidos_*.csv
+!medicos_extraidos_20260120_155027.csv
 
 # OS files
 Thumbs.db

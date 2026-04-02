@@ -5,6 +5,7 @@ __pycache__
 *.py
 *.pdf
 *_extraidos_*.csv
+!medicos_extraidos_20260120_155027.csv
 PERSONALIZACAO.md
 README.md
 supabase_schema.sql
