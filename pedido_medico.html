@@ -1460,7 +1460,6 @@
         <!-- Botões -->
         <div class="botoes">
             <button class="btn-primary" id="btnImprimirSalvar" onclick="imprimirESalvar()" disabled>🖨️ Imprimir / Salvar PDF</button>
-            <button class="btn-secondary" id="btnSalvarDados" onclick="salvarFormulario()" disabled>💾 Salvar Dados</button>
             <button class="btn-tertiary" onclick="limparFormulario()">🔄 Limpar Formulário</button>
         </div>
         <div id="status-conexao" style="margin-top: 8px; font-size: 11px; color: var(--text-muted); text-align: center; padding: 0 4px;"></div>
@@ -2130,7 +2129,10 @@
                 return;
             }
 
-            const btn = document.querySelector('.btn-secondary');
+            const btn = document.getElementById('btnSalvarDados');
+            if (!btn) {
+                return;
+            }
             btn.disabled = true;
             btn.textContent = '⏳ Capturando...';
 
