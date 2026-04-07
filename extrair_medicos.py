@@ -7,7 +7,6 @@ Colunas geradas: CodMedico, CRM, NomMedico, CRMUF
 import pymysql
 import csv
 import os
-from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
@@ -47,11 +46,8 @@ def extrair_medicos():
 
         print(f"OK - {len(medicos)} médicos ativos encontrados")
 
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        csv_filename = f'medicos_extraidos_{timestamp}.csv'
-        pasta_dados = os.path.join(os.path.dirname(__file__), '..', 'dados')
-        os.makedirs(pasta_dados, exist_ok=True)
-        csv_path = os.path.join(pasta_dados, csv_filename)
+        csv_filename = 'medicos_extraidos.csv'
+        csv_path = os.path.join(os.path.dirname(__file__), csv_filename)
 
         with open(csv_path, 'w', newline='', encoding='utf-8-sig') as f:
             if medicos:
