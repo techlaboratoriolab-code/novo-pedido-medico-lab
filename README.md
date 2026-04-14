@@ -128,25 +128,6 @@ Para não deixar a chave no HTML, o projeto agora lê do ambiente via `/api/conf
 
 > Importante: use somente chave `anon` no frontend. Nunca exponha `service_role`.
 
-## 🔗 Acesso Direto por Médico
-
-No Vercel, o formulário agora aceita links específicos por médico sem precisar digitar login e senha na tela.
-
-Formato da URL:
-
-- `/medico/nome-do-medico`
-
-Exemplos:
-
-- `/medico/decio-fausto-gorini`
-- `/medico/aline-marques-dos-santos`
-- `/medico/thiago-jose-fernandes`
-
-Observações:
-
-- A rota é resolvida pelo `vercel.json` e sempre abre o mesmo `pedido_medico.html`.
-- Ao acessar a URL, o sistema identifica o médico pelo slug da URL e libera o formulário automaticamente.
-- Se o link não corresponder a nenhum médico da lista carregada, o sistema volta para o login manual.
 
 ### Passo 1: Abrir o Formulário
 - Abra o arquivo `pedido_medico.html` em qualquer navegador

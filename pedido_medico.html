@@ -359,7 +359,6 @@
             margin-bottom: 0;
         }
 
-        .card-login-inicial select,
         .card-login-inicial input[type="text"],
         .card-login-inicial input[type="password"] {
             height: 50px;
@@ -372,24 +371,6 @@
             transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s, transform 0.2s;
         }
 
-        .card-login-inicial select {
-            appearance: none;
-            padding-right: 42px;
-            background-image:
-                linear-gradient(45deg, transparent 50%, #93c5fd 50%),
-                linear-gradient(135deg, #93c5fd 50%, transparent 50%);
-            background-position:
-                calc(100% - 19px) calc(50% - 3px),
-                calc(100% - 13px) calc(50% - 3px);
-            background-size: 6px 6px, 6px 6px;
-            background-repeat: no-repeat;
-        }
-
-        .card-login-inicial select option {
-            color: #0f172a;
-        }
-
-        .card-login-inicial select:focus,
         .card-login-inicial input[type="text"]:focus,
         .card-login-inicial input[type="password"]:focus {
             border-color: #60a5fa;
@@ -407,6 +388,127 @@
             font-size: 11px;
             color: #93c5fd;
             line-height: 1.5;
+        }
+
+        .login-medico-picker {
+            position: relative;
+        }
+
+        .login-medico-busca {
+            padding-right: 44px !important;
+            background-image:
+                radial-gradient(circle at center, rgba(147, 197, 253, 0.95) 0 2px, transparent 3px),
+                linear-gradient(rgba(147, 197, 253, 0.95), rgba(147, 197, 253, 0.95));
+            background-size: 10px 10px, 2px 8px;
+            background-position: calc(100% - 20px) calc(50% - 2px), calc(100% - 14px) calc(50% + 7px);
+            background-repeat: no-repeat;
+        }
+
+        .login-medico-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            right: 0;
+            z-index: 50;
+            border-radius: 18px;
+            border: 1px solid rgba(96, 165, 250, 0.24);
+            background: rgba(8, 15, 31, 0.98);
+            box-shadow: 0 22px 50px rgba(2, 6, 23, 0.52);
+            overflow: hidden;
+        }
+
+        .login-medico-dropdown-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.14);
+            background: rgba(15, 23, 42, 0.92);
+            color: #93c5fd;
+            font-size: 11px;
+        }
+
+        .login-medico-limpar {
+            border: 0;
+            background: transparent;
+            color: #bfdbfe;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .login-medico-limpar:hover {
+            color: #ffffff;
+        }
+
+        .login-medico-opcoes {
+            max-height: 280px;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .login-medico-opcao {
+            width: 100%;
+            border: 0;
+            border-radius: 14px;
+            background: transparent;
+            color: #e2e8f0;
+            text-align: left;
+            padding: 10px 12px;
+            cursor: pointer;
+            transition: background-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .login-medico-opcao:hover,
+        .login-medico-opcao.ativo {
+            background: rgba(37, 99, 235, 0.22);
+            transform: translateY(-1px);
+        }
+
+        .login-medico-opcao-nome {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #f8fafc;
+            margin-bottom: 4px;
+        }
+
+        .login-medico-opcao-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            font-size: 11px;
+            color: #93c5fd;
+        }
+
+        .login-medico-vazio {
+            padding: 18px 12px;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .login-medico-selecao {
+            margin-top: 10px;
+            min-height: 42px;
+            border-radius: 14px;
+            border: 1px solid rgba(59, 130, 246, 0.16);
+            background: rgba(15, 23, 42, 0.5);
+            padding: 10px 12px;
+            color: #cbd5e1;
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+        .login-medico-selecao strong {
+            display: block;
+            color: #f8fafc;
+            font-size: 13px;
+            margin-bottom: 3px;
         }
 
         .login-support-note {
@@ -1259,9 +1361,18 @@
                 <div class="login-medico-campos">
                     <div class="form-field">
                         <label>Médico(a)</label>
-                        <select id="loginMedico">
-                            <option value="">Selecione um médico</option>
-                        </select>
+                        <div class="login-medico-picker">
+                            <input type="text" id="loginMedicoBusca" class="login-medico-busca" placeholder="Digite para filtrar por nome ou CRM" autocomplete="off">
+                            <input type="hidden" id="loginMedico">
+                            <div class="login-medico-dropdown" id="loginMedicoDropdown" hidden>
+                                <div class="login-medico-dropdown-head">
+                                    <span id="loginMedicoResultadoTexto">Digite para buscar um médico.</span>
+                                    <button type="button" class="login-medico-limpar" onclick="limparSelecaoMedico()">Limpar</button>
+                                </div>
+                                <div class="login-medico-opcoes" id="loginMedicoOpcoes"></div>
+                            </div>
+                        </div>
+                        <div class="login-medico-selecao" id="loginMedicoSelecao">Nenhum médico selecionado.</div>
                     </div>
                     <div class="form-field">
                         <label>PIN de 4 dígitos</label>
@@ -1851,11 +1962,15 @@
         // Auto-preencher data atual
         document.getElementById('dataExame').value = new Date().toLocaleDateString('pt-BR');
 
-        const PREFIXO_URL_MEDICO = '/medico/';
         const loginStatusEl = document.getElementById('loginStatus');
         const btnEntrarMedico = document.getElementById('btnEntrarMedico');
         const btnSairMedico = document.getElementById('btnSairMedico');
         const loginMedicoInput = document.getElementById('loginMedico');
+        const loginMedicoBuscaInput = document.getElementById('loginMedicoBusca');
+        const loginMedicoDropdown = document.getElementById('loginMedicoDropdown');
+        const loginMedicoOpcoes = document.getElementById('loginMedicoOpcoes');
+        const loginMedicoResultadoTexto = document.getElementById('loginMedicoResultadoTexto');
+        const loginMedicoSelecao = document.getElementById('loginMedicoSelecao');
         const senhaMedicoInput = document.getElementById('senhaMedico');
         const telaLoginInicial = document.getElementById('telaLoginInicial');
         const pedidoContainer = document.getElementById('pedidoContainer');
@@ -1864,8 +1979,8 @@
         const medicoLogadoNome = document.getElementById('medicoLogadoNome');
         const medicoLogadoCrm = document.getElementById('medicoLogadoCrm');
         let medicoLogado = null;
-        let acessoDiretoAtivo = false;
         let mensagemAcessoLogin = '';
+        let medicoFiltroAtual = '';
 
         const medicosBase = [
             { nome: 'Décio Fausto Gorini', crm: 'CRM DF 1768 RQE 925' },
@@ -1937,22 +2052,107 @@
             }));
         }
 
-        function preencherListaMedicos() {
-            if (!loginMedicoInput) return;
+        function atualizarResumoMedicoSelecionado() {
+            if (!loginMedicoSelecao) return;
 
-            const valorAtual = loginMedicoInput.value;
-            loginMedicoInput.innerHTML = '<option value="">Selecione um médico</option>';
-
-            medicos.forEach((medico) => {
-                const option = document.createElement('option');
-                option.value = medico.login;
-                option.textContent = `${medico.nome} (${medico.crm})`;
-                loginMedicoInput.appendChild(option);
-            });
-
-            if (valorAtual && medicos.some((medico) => medico.login === valorAtual)) {
-                loginMedicoInput.value = valorAtual;
+            const medicoSelecionado = medicos.find((medico) => medico.login === loginMedicoInput.value);
+            if (!medicoSelecionado) {
+                loginMedicoSelecao.textContent = 'Nenhum médico selecionado.';
+                return;
             }
+
+            loginMedicoSelecao.innerHTML = `<strong>${medicoSelecionado.nome}</strong>${medicoSelecionado.crm}`;
+        }
+
+        function obterMedicosFiltrados(termo) {
+            const termoNormalizado = normalizarTexto(termo || '').trim();
+            if (!termoNormalizado) {
+                return medicos.slice(0, 80);
+            }
+
+            return medicos.filter((medico) => {
+                return normalizarTexto(`${medico.nome} ${medico.crm}`).includes(termoNormalizado);
+            }).slice(0, 80);
+        }
+
+        function renderizarOpcoesMedicos(termo = '') {
+            if (!loginMedicoOpcoes || !loginMedicoResultadoTexto) return;
+
+            medicoFiltroAtual = termo;
+            const medicosFiltrados = obterMedicosFiltrados(termo);
+            loginMedicoOpcoes.innerHTML = '';
+
+            if (medicosFiltrados.length === 0) {
+                loginMedicoResultadoTexto.textContent = 'Nenhum médico encontrado.';
+                loginMedicoOpcoes.innerHTML = '<div class="login-medico-vazio">Nenhum resultado para esse filtro. Tente parte do nome ou do CRM.</div>';
+                return;
+            }
+
+            loginMedicoResultadoTexto.textContent = termo
+                ? `${medicosFiltrados.length} médico(s) encontrado(s)`
+                : `Mostrando ${medicosFiltrados.length} médicos`;
+
+            medicosFiltrados.forEach((medico) => {
+                const option = document.createElement('button');
+                option.type = 'button';
+                option.className = 'login-medico-opcao';
+                if (loginMedicoInput.value === medico.login) {
+                    option.classList.add('ativo');
+                }
+                option.innerHTML = `
+                    <span class="login-medico-opcao-nome">${medico.nome}</span>
+                    <span class="login-medico-opcao-meta">
+                        <span>${medico.crm}</span>
+                        <span>${medico.login}</span>
+                    </span>
+                `;
+                option.addEventListener('mousedown', (event) => {
+                    event.preventDefault();
+                    selecionarMedicoLogin(medico.login);
+                });
+                loginMedicoOpcoes.appendChild(option);
+            });
+        }
+
+        function abrirDropdownMedicos() {
+            if (!loginMedicoDropdown) return;
+            loginMedicoDropdown.hidden = false;
+            renderizarOpcoesMedicos(loginMedicoBuscaInput?.value || '');
+        }
+
+        function fecharDropdownMedicos() {
+            if (!loginMedicoDropdown) return;
+            loginMedicoDropdown.hidden = true;
+        }
+
+        function selecionarMedicoLogin(login) {
+            const medicoSelecionado = medicos.find((medico) => medico.login === login);
+            loginMedicoInput.value = medicoSelecionado?.login || '';
+
+            if (loginMedicoBuscaInput) {
+                loginMedicoBuscaInput.value = medicoSelecionado
+                    ? `${medicoSelecionado.nome} (${medicoSelecionado.crm})`
+                    : '';
+            }
+
+            atualizarResumoMedicoSelecionado();
+            renderizarOpcoesMedicos(medicoFiltroAtual);
+            fecharDropdownMedicos();
+        }
+
+        function limparSelecaoMedico() {
+            loginMedicoInput.value = '';
+            if (loginMedicoBuscaInput) {
+                loginMedicoBuscaInput.value = '';
+                loginMedicoBuscaInput.focus();
+            }
+            atualizarResumoMedicoSelecionado();
+            abrirDropdownMedicos();
+        }
+
+        function preencherListaMedicos() {
+            renderizarOpcoesMedicos(loginMedicoBuscaInput?.value || '');
+            atualizarResumoMedicoSelecionado();
         }
 
         function parseCsvMedicos(csvTexto) {
@@ -2035,42 +2235,8 @@
             return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
         }
 
-        function obterSlugsDoMedico(medico) {
-            const crmNumerico = (medico?.crm || '').replace(/\D/g, '');
-            return Array.from(new Set([
-                gerarSlug(medico?.nome || ''),
-                gerarSlug(medico?.login || ''),
-                crmNumerico ? `${gerarSlug(medico?.nome || '')}-${crmNumerico}` : '',
-                crmNumerico
-            ].filter(Boolean)));
-        }
-
-        function obterSlugMedicoDaUrl() {
-            const caminhoAtual = window.location.pathname || '/';
-            if (!caminhoAtual.startsWith(PREFIXO_URL_MEDICO)) {
-                return '';
-            }
-
-            const slug = caminhoAtual.slice(PREFIXO_URL_MEDICO.length).split('/')[0] || '';
-            return gerarSlug(decodeURIComponent(slug));
-        }
-
-        function encontrarMedicoPorSlug(slug) {
-            const slugNormalizado = gerarSlug(slug);
-            if (!slugNormalizado) return null;
-
-            return medicos.find((medico) => obterSlugsDoMedico(medico).includes(slugNormalizado)) || null;
-        }
-
-        function obterUrlDiretaMedico(medico) {
-            const slugPrincipal = gerarSlug(medico?.nome || medico?.login || '');
-            if (!slugPrincipal) return '';
-            return `${window.location.origin}${PREFIXO_URL_MEDICO}${slugPrincipal}`;
-        }
-
         function definirMedicoLogado(medico, origem = 'manual') {
             medicoLogado = medico;
-            acessoDiretoAtivo = origem === 'url';
 
             if (medico) {
                 localStorage.setItem('medicoLogado', JSON.stringify(medico));
@@ -2089,20 +2255,17 @@
             if (medicoLogado) {
                 assinaturaMedicoEl.innerHTML = '';
                 infoMedicoAssinaturaEl.textContent = `${medicoLogado.nome} — ${medicoLogado.crm}`;
-                loginStatusEl.textContent = acessoDiretoAtivo
-                    ? `🔗 Acesso direto liberado para ${medicoLogado.nome}`
-                    : `✅ Acesso liberado para ${medicoLogado.nome}`;
+                loginStatusEl.textContent = `✅ Acesso liberado para ${medicoLogado.nome}`;
                 medicoLogadoNome.textContent = medicoLogado.nome;
                 medicoLogadoCrm.textContent = medicoLogado.crm;
                 if (medicoAvatar) {
                     medicoAvatar.textContent = obterIniciais(medicoLogado.nome);
-                    medicoAvatar.title = acessoDiretoAtivo
-                        ? `${medicoLogado.nome} | ${obterUrlDiretaMedico(medicoLogado)}`
-                        : medicoLogado.nome;
+                    medicoAvatar.title = medicoLogado.nome;
                 }
                 btnEntrarMedico.disabled = true;
                 if (btnSairMedico) btnSairMedico.disabled = false;
                 loginMedicoInput.disabled = true;
+                if (loginMedicoBuscaInput) loginMedicoBuscaInput.disabled = true;
                 senhaMedicoInput.disabled = true;
             } else {
                 assinaturaMedicoEl.innerHTML = '';
@@ -2117,9 +2280,11 @@
                 btnEntrarMedico.disabled = false;
                 if (btnSairMedico) btnSairMedico.disabled = true;
                 loginMedicoInput.disabled = false;
+                if (loginMedicoBuscaInput) loginMedicoBuscaInput.disabled = false;
                 senhaMedicoInput.disabled = false;
             }
 
+            atualizarResumoMedicoSelecionado();
             atualizarVisibilidadeTelaPorLogin();
         }
 
@@ -2136,7 +2301,7 @@
             if (medicoLogado) return true;
             if (mostrarAlerta) {
                 alert('Faça login do médico para salvar ou imprimir o pedido.');
-                loginMedicoInput.focus();
+                loginMedicoBuscaInput.focus();
             }
             return false;
         }
@@ -2173,31 +2338,15 @@
         }
 
         function sairMedico() {
-            const estavaEmAcessoDireto = acessoDiretoAtivo || !!obterSlugMedicoDaUrl();
             mensagemAcessoLogin = '';
-            loginMedicoInput.value = '';
+            limparSelecaoMedico();
             senhaMedicoInput.value = '';
             definirMedicoLogado(null, 'manual');
-            if (estavaEmAcessoDireto) {
-                window.history.replaceState({}, document.title, '/');
-            }
-            loginMedicoInput.focus();
+            loginMedicoBuscaInput.focus();
         }
 
         async function aplicarAcessoInicial() {
             await carregarMedicosDoCsv();
-
-            const slugDaUrl = obterSlugMedicoDaUrl();
-            if (slugDaUrl) {
-                const medicoViaUrl = encontrarMedicoPorSlug(slugDaUrl);
-                if (medicoViaUrl) {
-                    mensagemAcessoLogin = '';
-                    definirMedicoLogado(medicoViaUrl, 'url');
-                    return;
-                }
-
-                mensagemAcessoLogin = '⚠️ Link de acesso do médico não foi reconhecido. Faça login manualmente.';
-            }
 
             const sessaoSalva = localStorage.getItem('medicoLogado');
             if (sessaoSalva) {
@@ -2215,13 +2364,43 @@
             atualizarEstadoAcoesObrigatorias();
         }
 
-        [loginMedicoInput, senhaMedicoInput].forEach((el) => {
+        [loginMedicoBuscaInput, senhaMedicoInput].forEach((el) => {
             el.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     entrarMedico();
                 }
             });
+        });
+
+        loginMedicoBuscaInput?.addEventListener('focus', () => {
+            abrirDropdownMedicos();
+        });
+
+        loginMedicoBuscaInput?.addEventListener('input', (e) => {
+            loginMedicoInput.value = '';
+            renderizarOpcoesMedicos(e.target.value || '');
+            atualizarResumoMedicoSelecionado();
+            abrirDropdownMedicos();
+        });
+
+        loginMedicoBuscaInput?.addEventListener('blur', () => {
+            window.setTimeout(() => {
+                fecharDropdownMedicos();
+                const medicoSelecionado = medicos.find((medico) => medico.login === loginMedicoInput.value);
+                if (medicoSelecionado) {
+                    loginMedicoBuscaInput.value = `${medicoSelecionado.nome} (${medicoSelecionado.crm})`;
+                } else if (!medicoLogado) {
+                    loginMedicoBuscaInput.value = '';
+                }
+            }, 120);
+        });
+
+        document.addEventListener('click', (event) => {
+            const clicouDentro = event.target.closest('.login-medico-picker');
+            if (!clicouDentro) {
+                fecharDropdownMedicos();
+            }
         });
 
         senhaMedicoInput?.addEventListener('input', (e) => {
