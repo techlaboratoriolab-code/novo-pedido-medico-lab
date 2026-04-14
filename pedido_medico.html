@@ -1331,25 +1331,25 @@
     <div id="telaLoginInicial" class="tela-login-inicial">
         <div class="login-shell">
             <section class="login-hero">
-                <div class="login-badge">Acesso médico protegido</div>
-                <h1>Pedido médico com entrada mais limpa, rápida e profissional.</h1>
-                <p>Selecione o médico responsável, informe o PIN de 4 dígitos e acesse o formulário sem ruído visual. A página continua compatível com acesso direto por URL no Vercel.</p>
+                <div class="login-badge">Acesso do corpo clínico</div>
+                <h1>Selecione o médico e entre com o PIN.</h1>
+                <p>Esta tela existe só para liberar o preenchimento do pedido médico. Escolha o profissional na lista, informe o PIN de 4 dígitos e siga para o formulário.</p>
                 <div class="login-feature-list">
                     <div class="login-feature">
-                        <strong>Entrada objetiva</strong>
-                        <span>Lista suspensa com os médicos cadastrados e validação curta por PIN.</span>
+                        <strong>Busca rápida</strong>
+                        <span>Filtre por nome ou CRM para localizar o médico sem percorrer uma lista enorme.</span>
                     </div>
                     <div class="login-feature">
-                        <strong>Fluxo contínuo</strong>
-                        <span>Depois do acesso, o pedido abre pronto para preenchimento e impressão.</span>
+                        <strong>PIN individual</strong>
+                        <span>Cada médico entra com seu código de 4 dígitos antes de abrir o pedido.</span>
                     </div>
                     <div class="login-feature">
-                        <strong>Compatível com Vercel</strong>
-                        <span>Links diretos por médico continuam funcionando junto com o login manual.</span>
+                        <strong>Abertura direta</strong>
+                        <span>Depois da validação, o formulário já fica pronto para preencher, imprimir e salvar.</span>
                     </div>
                     <div class="login-feature">
-                        <strong>Visual mais forte</strong>
-                        <span>Contraste melhor, leitura mais clara e menos aparência de protótipo cru.</span>
+                        <strong>Base atualizável</strong>
+                        <span>A lista de médicos vem do CSV carregado no projeto, sem cadastro manual na tela.</span>
                     </div>
                 </div>
             </section>
@@ -1357,7 +1357,7 @@
             <div class="card-login-inicial">
                 <div class="login-logo">LAB</div>
                 <div class="login-medico-titulo">Entrar no Pedido Médico</div>
-                <div class="login-medico-subtitulo">Escolha o profissional responsável e valide o acesso com o PIN individual de 4 dígitos.</div>
+                <div class="login-medico-subtitulo">Escolha o profissional responsável e valide o acesso com o PIN de 4 dígitos.</div>
                 <div class="login-medico-campos">
                     <div class="form-field">
                         <label>Médico(a)</label>
@@ -1377,7 +1377,7 @@
                     <div class="form-field">
                         <label>PIN de 4 dígitos</label>
                         <input type="password" id="senhaMedico" placeholder="0000" inputmode="numeric" maxlength="4" pattern="\d{4}">
-                        <div class="login-pin-hint">Use apenas números. Se o acesso vier por link direto, esta etapa é pulada automaticamente.</div>
+                        <div class="login-pin-hint">Use apenas números. O acesso só é liberado após a validação desse PIN.</div>
                     </div>
                     <div class="login-medico-acoes">
                         <button type="button" class="btn-secondary btn-login" id="btnEntrarMedico" onclick="entrarMedico()">Entrar</button>
@@ -1385,7 +1385,7 @@
                 </div>
                 <div id="loginStatus" class="login-status">🔒 Faça login para abrir o pedido médico.</div>
                 <div class="login-support-note">
-                    Se algum médico não aparecer na lista, revise a carga do CSV de médicos antes do deploy.
+                    Se algum médico não aparecer na busca, revise o arquivo CSV usado para carregar a lista de profissionais.
                 </div>
             </div>
         </div>
