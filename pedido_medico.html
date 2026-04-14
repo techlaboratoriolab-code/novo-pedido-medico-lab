@@ -51,10 +51,11 @@
             align-items: center;
             justify-content: center;
             background:
-                radial-gradient(circle at 18% 40%, rgba(14, 165, 233, 0.14) 0%, rgba(14, 165, 233, 0) 38%),
-                radial-gradient(circle at 84% 62%, rgba(59, 130, 246, 0.18) 0%, rgba(59, 130, 246, 0) 42%),
-                linear-gradient(120deg, #020817 0%, #0f172a 45%, #1e3a8a 100%);
-            padding: 24px;
+                radial-gradient(circle at 12% 18%, rgba(56, 189, 248, 0.22) 0%, rgba(56, 189, 248, 0) 32%),
+                radial-gradient(circle at 88% 22%, rgba(59, 130, 246, 0.18) 0%, rgba(59, 130, 246, 0) 28%),
+                radial-gradient(circle at 52% 88%, rgba(16, 185, 129, 0.14) 0%, rgba(16, 185, 129, 0) 24%),
+                linear-gradient(135deg, #020617 0%, #0f172a 48%, #172554 100%);
+            padding: 28px;
             position: relative;
             overflow: hidden;
         }
@@ -64,21 +65,128 @@
             position: absolute;
             inset: 0;
             background-image:
-                linear-gradient(rgba(148, 163, 184, 0.10) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(148, 163, 184, 0.10) 1px, transparent 1px);
-            background-size: 52px 52px;
+                linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+            background-size: 56px 56px;
             pointer-events: none;
+        }
+
+        .tela-login-inicial::after {
+            content: '';
+            position: absolute;
+            width: 520px;
+            height: 520px;
+            right: -120px;
+            bottom: -180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.14) 0%, rgba(96, 165, 250, 0) 68%);
+            filter: blur(10px);
+            pointer-events: none;
+        }
+
+        .login-shell {
+            width: 100%;
+            max-width: 1080px;
+            display: grid;
+            grid-template-columns: minmax(0, 1.05fr) minmax(360px, 420px);
+            gap: 22px;
+            position: relative;
+            z-index: 1;
+            align-items: stretch;
+        }
+
+        .login-hero {
+            position: relative;
+            border-radius: 28px;
+            padding: 34px 34px 30px;
+            border: 1px solid rgba(125, 211, 252, 0.18);
+            background:
+                linear-gradient(160deg, rgba(15, 23, 42, 0.78) 0%, rgba(15, 23, 42, 0.54) 100%),
+                linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(37, 99, 235, 0.08) 100%);
+            box-shadow: 0 28px 60px rgba(2, 6, 23, 0.38);
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+        }
+
+        .login-hero::before {
+            content: '';
+            position: absolute;
+            inset: auto -60px -80px auto;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.18) 0%, rgba(14, 165, 233, 0) 70%);
+            pointer-events: none;
+        }
+
+        .login-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #bae6fd;
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(125, 211, 252, 0.22);
+            background: rgba(8, 47, 73, 0.34);
+            margin-bottom: 18px;
+        }
+
+        .login-hero h1 {
+            font-size: clamp(34px, 5vw, 56px);
+            line-height: 0.96;
+            letter-spacing: -0.05em;
+            color: #f8fafc;
+            max-width: 520px;
+            margin-bottom: 14px;
+        }
+
+        .login-hero p {
+            max-width: 520px;
+            color: #cbd5e1;
+            font-size: 15px;
+            line-height: 1.65;
+            margin-bottom: 24px;
+        }
+
+        .login-feature-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .login-feature {
+            padding: 14px 14px 13px;
+            border-radius: 18px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            background: rgba(15, 23, 42, 0.46);
+        }
+
+        .login-feature strong {
+            display: block;
+            color: #f8fafc;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .login-feature span {
+            color: #94a3b8;
+            font-size: 12px;
+            line-height: 1.55;
         }
 
         .card-login-inicial {
             width: 100%;
             max-width: 420px;
-            border: 1px solid rgba(96, 165, 250, 0.24);
-            border-radius: 24px;
-            box-shadow: 0 24px 56px rgba(2, 6, 23, 0.62);
-            padding: 28px 24px 20px;
-            background: linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(17, 24, 39, 0.88) 100%);
-            backdrop-filter: blur(8px);
+            border: 1px solid rgba(96, 165, 250, 0.18);
+            border-radius: 28px;
+            box-shadow: 0 26px 62px rgba(2, 6, 23, 0.52);
+            padding: 30px 26px 22px;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.94) 0%, rgba(17, 24, 39, 0.91) 100%);
+            backdrop-filter: blur(14px);
             position: relative;
             z-index: 1;
         }
@@ -98,19 +206,19 @@
         }
 
         .login-logo {
-            width: 84px;
-            height: 84px;
-            margin: 0 auto 18px;
+            width: 78px;
+            height: 78px;
+            margin: 0 0 18px;
             border-radius: 999px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 34px;
+            font-size: 28px;
             font-weight: 700;
             color: #dbeafe;
             border: 3px solid rgba(219, 234, 254, 0.95);
-            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.16), 0 10px 20px rgba(37, 99, 235, 0.28);
+            background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+            box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.12), 0 14px 28px rgba(37, 99, 235, 0.28);
         }
 
         .container {
@@ -215,91 +323,129 @@
 
         .login-medico-titulo {
             font-weight: 700;
-            font-size: 34px;
-            margin-bottom: 6px;
-            color: #93c5fd;
+            font-size: 30px;
+            margin-bottom: 8px;
+            color: #eff6ff;
             text-transform: none;
-            letter-spacing: -0.4px;
-            text-align: center;
-            line-height: 1;
+            letter-spacing: -0.04em;
+            text-align: left;
+            line-height: 1.02;
         }
 
         .login-medico-subtitulo {
-            text-align: center;
+            text-align: left;
             color: #94a3b8;
             font-size: 14px;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
             opacity: 0.95;
+            line-height: 1.55;
         }
 
         .login-medico-campos .form-field label {
-            color: #cbd5e1;
+            color: #bfdbfe;
             font-size: 11px;
-            letter-spacing: 0.2px;
-            text-transform: none;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 7px;
         }
 
         .login-medico-campos {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
         }
 
         .card-login-inicial .form-field {
             margin-bottom: 0;
         }
 
+        .card-login-inicial select,
         .card-login-inicial input[type="text"],
         .card-login-inicial input[type="password"] {
-            height: 46px;
-            border: 1px solid rgba(59, 130, 246, 0.30);
-            border-radius: 12px;
+            height: 50px;
+            border: 1px solid rgba(59, 130, 246, 0.22);
+            border-radius: 14px;
             padding: 0 14px;
             font-size: 14px;
-            background: rgba(15, 23, 42, 0.75);
+            background: rgba(15, 23, 42, 0.82);
             color: #e2e8f0;
-            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s, transform 0.2s;
         }
 
+        .card-login-inicial select {
+            appearance: none;
+            padding-right: 42px;
+            background-image:
+                linear-gradient(45deg, transparent 50%, #93c5fd 50%),
+                linear-gradient(135deg, #93c5fd 50%, transparent 50%);
+            background-position:
+                calc(100% - 19px) calc(50% - 3px),
+                calc(100% - 13px) calc(50% - 3px);
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+        }
+
+        .card-login-inicial select option {
+            color: #0f172a;
+        }
+
+        .card-login-inicial select:focus,
         .card-login-inicial input[type="text"]:focus,
         .card-login-inicial input[type="password"]:focus {
             border-color: #60a5fa;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.20);
-            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.16);
+            background: rgba(15, 23, 42, 0.94);
+            transform: translateY(-1px);
         }
 
         .login-medico input::placeholder {
             color: #64748b;
         }
 
+        .login-pin-hint {
+            margin-top: -4px;
+            font-size: 11px;
+            color: #93c5fd;
+            line-height: 1.5;
+        }
+
+        .login-support-note {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(59, 130, 246, 0.16);
+            color: #94a3b8;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
         .login-medico-acoes {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
         .btn-login {
-            height: 48px;
+            height: 52px;
             width: 100%;
             padding: 0 16px;
             border: none;
-            border-radius: 12px;
+            border-radius: 14px;
             cursor: pointer;
             font-weight: 700;
             font-family: 'Inter', Arial, sans-serif;
-            font-size: 18px;
-            letter-spacing: 0;
-            background: linear-gradient(90deg, #1d4ed8 0%, #4338ca 100%);
+            font-size: 17px;
+            letter-spacing: 0.01em;
+            background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%);
             color: #e2e8f0;
-            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 14px 30px rgba(14, 165, 233, 0.22);
             transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
         }
 
         .btn-login:hover {
             transform: translateY(-1px);
             filter: brightness(1.06);
-            box-shadow: 0 14px 30px rgba(37, 99, 235, 0.36);
+            box-shadow: 0 18px 34px rgba(14, 165, 233, 0.28);
         }
 
         #btnSairMedico {
@@ -313,11 +459,12 @@
 
         .login-status {
             font-size: 12px;
-            color: #93c5fd;
-            margin-top: 14px;
+            color: #bfdbfe;
+            margin-top: 16px;
             padding-top: 12px;
             border-top: 1px solid rgba(59, 130, 246, 0.2);
-            text-align: center;
+            text-align: left;
+            line-height: 1.55;
         }
 
         .medico-logado-barra,
@@ -441,6 +588,19 @@
         }
 
         @media (max-width: 900px) {
+            .login-shell {
+                grid-template-columns: 1fr;
+                max-width: 460px;
+            }
+
+            .login-hero {
+                padding: 24px 22px 20px;
+            }
+
+            .login-feature-list {
+                grid-template-columns: 1fr;
+            }
+
             .header {
                 flex-direction: column;
                 align-items: stretch;
@@ -467,6 +627,27 @@
             #medicoLogadoNome,
             #medicoLogadoCrm {
                 max-width: 100%;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .tela-login-inicial {
+                padding: 16px;
+            }
+
+            .card-login-inicial {
+                padding: 24px 18px 18px;
+                border-radius: 22px;
+            }
+
+            .login-logo {
+                width: 70px;
+                height: 70px;
+                font-size: 24px;
+            }
+
+            .login-medico-titulo {
+                font-size: 26px;
             }
         }
 
@@ -1046,26 +1227,56 @@
     </div>
 
     <div id="telaLoginInicial" class="tela-login-inicial">
-        <div class="card-login-inicial">
-            <div class="login-logo">LAB</div>
-            <div class="login-medico-titulo">Pedido Médico</div>
-            <div class="login-medico-subtitulo">Faça login para continuar</div>
-            <div class="login-medico-campos">
-                <div class="form-field">
-                    <label>Médico(a)</label>
-                    <select id="loginMedico">
-                        <option value="">Selecione um médico</option>
-                    </select>
+        <div class="login-shell">
+            <section class="login-hero">
+                <div class="login-badge">Acesso médico protegido</div>
+                <h1>Pedido médico com entrada mais limpa, rápida e profissional.</h1>
+                <p>Selecione o médico responsável, informe o PIN de 4 dígitos e acesse o formulário sem ruído visual. A página continua compatível com acesso direto por URL no Vercel.</p>
+                <div class="login-feature-list">
+                    <div class="login-feature">
+                        <strong>Entrada objetiva</strong>
+                        <span>Lista suspensa com os médicos cadastrados e validação curta por PIN.</span>
+                    </div>
+                    <div class="login-feature">
+                        <strong>Fluxo contínuo</strong>
+                        <span>Depois do acesso, o pedido abre pronto para preenchimento e impressão.</span>
+                    </div>
+                    <div class="login-feature">
+                        <strong>Compatível com Vercel</strong>
+                        <span>Links diretos por médico continuam funcionando junto com o login manual.</span>
+                    </div>
+                    <div class="login-feature">
+                        <strong>Visual mais forte</strong>
+                        <span>Contraste melhor, leitura mais clara e menos aparência de protótipo cru.</span>
+                    </div>
                 </div>
-                <div class="form-field">
-                    <label>PIN de 4 dígitos</label>
-                    <input type="password" id="senhaMedico" placeholder="0000" inputmode="numeric" maxlength="4" pattern="\d{4}">
+            </section>
+
+            <div class="card-login-inicial">
+                <div class="login-logo">LAB</div>
+                <div class="login-medico-titulo">Entrar no Pedido Médico</div>
+                <div class="login-medico-subtitulo">Escolha o profissional responsável e valide o acesso com o PIN individual de 4 dígitos.</div>
+                <div class="login-medico-campos">
+                    <div class="form-field">
+                        <label>Médico(a)</label>
+                        <select id="loginMedico">
+                            <option value="">Selecione um médico</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>PIN de 4 dígitos</label>
+                        <input type="password" id="senhaMedico" placeholder="0000" inputmode="numeric" maxlength="4" pattern="\d{4}">
+                        <div class="login-pin-hint">Use apenas números. Se o acesso vier por link direto, esta etapa é pulada automaticamente.</div>
+                    </div>
+                    <div class="login-medico-acoes">
+                        <button type="button" class="btn-secondary btn-login" id="btnEntrarMedico" onclick="entrarMedico()">Entrar</button>
+                    </div>
                 </div>
-                <div class="login-medico-acoes">
-                    <button type="button" class="btn-secondary btn-login" id="btnEntrarMedico" onclick="entrarMedico()">Entrar</button>
+                <div id="loginStatus" class="login-status">🔒 Faça login para abrir o pedido médico.</div>
+                <div class="login-support-note">
+                    Se algum médico não aparecer na lista, revise a carga do CSV de médicos antes do deploy.
                 </div>
             </div>
-            <div id="loginStatus" class="login-status">🔒 Faça login para abrir o pedido médico.</div>
         </div>
     </div>
 
