@@ -1052,12 +1052,14 @@
             <div class="login-medico-subtitulo">Faça login para continuar</div>
             <div class="login-medico-campos">
                 <div class="form-field">
-                    <label>Login / Nome / CRM do(a) Médico(a)</label>
-                    <input type="text" id="loginMedico" placeholder="ex.: maria.lab, nome completo ou CRM">
+                    <label>Médico(a)</label>
+                    <select id="loginMedico">
+                        <option value="">Selecione um médico</option>
+                    </select>
                 </div>
                 <div class="form-field">
-                    <label>Senha</label>
-                    <input type="password" id="senhaMedico" placeholder="••••••••">
+                    <label>PIN de 4 dígitos</label>
+                    <input type="password" id="senhaMedico" placeholder="0000" inputmode="numeric" maxlength="4" pattern="\d{4}">
                 </div>
                 <div class="login-medico-acoes">
                     <button type="button" class="btn-secondary btn-login" id="btnEntrarMedico" onclick="entrarMedico()">Entrar</button>
@@ -1638,7 +1640,6 @@
         // Auto-preencher data atual
         document.getElementById('dataExame').value = new Date().toLocaleDateString('pt-BR');
 
-        const SENHA_PADRAO_MEDICO = '12345678';
         const PREFIXO_URL_MEDICO = '/medico/';
         const loginStatusEl = document.getElementById('loginStatus');
         const btnEntrarMedico = document.getElementById('btnEntrarMedico');
@@ -1688,16 +1689,59 @@
             return login;
         }
 
+        function gerarNumeroDeterministico(textoBase) {
+            let acumulado = 0;
+            const texto = textoBase || '';
+            for (let i = 0; i < texto.length; i++) {
+                acumulado = (acumulado * 31 + texto.charCodeAt(i)) % 10000;
+            }
+            return acumulado;
+        }
+
+        function gerarPinDoMedico(medico, indice, pinsUsados) {
+            const base = `${medico.nome}|${medico.crm}|${indice}`;
+            let numero = gerarNumeroDeterministico(base);
+            let pin = String(numero).padStart(4, '0');
+
+            while (pinsUsados.has(pin) || pin === '0000') {
+                numero = (numero + 137) % 10000;
+                pin = String(numero).padStart(4, '0');
+            }
+
+            pinsUsados.add(pin);
+            return pin;
+        }
+
         let medicos = [];
         let medicosCarregados = false;
         let carregamentoMedicosPromise = null;
 
         function gerarListaMedicosComLogin(listaMedicos) {
             const loginsUsados = new Set();
+            const pinsUsados = new Set();
             return listaMedicos.map((medico, indice) => ({
                 ...medico,
-                login: gerarLoginDoMedico(medico.nome, indice, loginsUsados)
+                login: gerarLoginDoMedico(medico.nome, indice, loginsUsados),
+                pin: gerarPinDoMedico(medico, indice, pinsUsados)
             }));
+        }
+
+        function preencherListaMedicos() {
+            if (!loginMedicoInput) return;
+
+            const valorAtual = loginMedicoInput.value;
+            loginMedicoInput.innerHTML = '<option value="">Selecione um médico</option>';
+
+            medicos.forEach((medico) => {
+                const option = document.createElement('option');
+                option.value = medico.login;
+                option.textContent = `${medico.nome} (${medico.crm})`;
+                loginMedicoInput.appendChild(option);
+            });
+
+            if (valorAtual && medicos.some((medico) => medico.login === valorAtual)) {
+                loginMedicoInput.value = valorAtual;
+            }
         }
 
         function parseCsvMedicos(csvTexto) {
@@ -1760,8 +1804,11 @@
                     } else {
                         medicos = gerarListaMedicosComLogin(medicosBase);
                     }
+
+                    preencherListaMedicos();
                 } catch (error) {
                     medicos = gerarListaMedicosComLogin(medicosBase);
+                    preencherListaMedicos();
                 } finally {
                     medicosCarregados = true;
                 }
@@ -1833,7 +1880,7 @@
                 infoMedicoAssinaturaEl.textContent = `${medicoLogado.nome} — ${medicoLogado.crm}`;
                 loginStatusEl.textContent = acessoDiretoAtivo
                     ? `🔗 Acesso direto liberado para ${medicoLogado.nome}`
-                    : `✅ Logado como ${medicoLogado.login}`;
+                    : `✅ Acesso liberado para ${medicoLogado.nome}`;
                 medicoLogadoNome.textContent = medicoLogado.nome;
                 medicoLogadoCrm.textContent = medicoLogado.crm;
                 if (medicoAvatar) {
@@ -1884,17 +1931,16 @@
         }
 
         async function entrarMedico() {
-            const credencialDigitada = (loginMedicoInput.value || '').trim();
-            const loginDigitado = credencialDigitada.toLowerCase();
+            const loginDigitado = (loginMedicoInput.value || '').trim().toLowerCase();
             const senhaDigitada = (senhaMedicoInput.value || '').trim();
 
             if (!loginDigitado || !senhaDigitada) {
-                alert('Informe login e senha do médico.');
+                alert('Selecione o médico e informe o PIN de 4 dígitos.');
                 return;
             }
 
-            if (senhaDigitada !== SENHA_PADRAO_MEDICO) {
-                alert('Senha inválida. Use a senha padrão cadastrada para os médicos.');
+            if (!/^\d{4}$/.test(senhaDigitada)) {
+                alert('Informe um PIN válido com 4 dígitos.');
                 return;
             }
 
@@ -1902,20 +1948,12 @@
                 await carregarMedicosDoCsv();
             }
 
-            const credencialNormalizada = normalizarTexto(credencialDigitada);
-            const credencialNumerica = credencialDigitada.replace(/\D/g, '');
-
             let medicoEncontrado = medicos.find((medico) => {
-                const loginCorresponde = medico.login === loginDigitado;
-                const nomeCorresponde = normalizarTexto(medico.nome) === credencialNormalizada;
-                const crmCorrespondeTexto = normalizarTexto(medico.crm) === credencialNormalizada;
-                const crmCorrespondeNumero = (medico.crm || '').replace(/\D/g, '') === credencialNumerica;
-                return loginCorresponde || nomeCorresponde || crmCorrespondeTexto || crmCorrespondeNumero;
+                return medico.login === loginDigitado && medico.pin === senhaDigitada;
             });
 
             if (!medicoEncontrado) {
-                const exemplos = medicos.slice(0, 4).map((m) => m.login).join(', ');
-                alert(`Médico não encontrado. Você pode entrar com login (${exemplos}), nome completo ou CRM.`);
+                alert('Médico ou PIN inválido. Verifique os dados e tente novamente.');
                 return;
             }
 
@@ -1973,6 +2011,10 @@
                     entrarMedico();
                 }
             });
+        });
+
+        senhaMedicoInput?.addEventListener('input', (e) => {
+            e.target.value = (e.target.value || '').replace(/\D/g, '').slice(0, 4);
         });
 
         const camposPacienteObrigatoriosFixos = [
