@@ -1639,6 +1639,7 @@
         document.getElementById('dataExame').value = new Date().toLocaleDateString('pt-BR');
 
         const SENHA_PADRAO_MEDICO = '12345678';
+        const PREFIXO_URL_MEDICO = '/medico/';
         const loginStatusEl = document.getElementById('loginStatus');
         const btnEntrarMedico = document.getElementById('btnEntrarMedico');
         const btnSairMedico = document.getElementById('btnSairMedico');
@@ -1651,6 +1652,8 @@
         const medicoLogadoNome = document.getElementById('medicoLogadoNome');
         const medicoLogadoCrm = document.getElementById('medicoLogadoCrm');
         let medicoLogado = null;
+        let acessoDiretoAtivo = false;
+        let mensagemAcessoLogin = '';
 
         const medicosBase = [
             { nome: 'Décio Fausto Gorini', crm: 'CRM DF 1768 RQE 925' },
@@ -1664,6 +1667,13 @@
                 .normalize('NFD')
                 .replace(/[\u0300-\u036f]/g, '')
                 .toLowerCase();
+        }
+
+        function gerarSlug(texto) {
+            return normalizarTexto(texto)
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .replace(/-{2,}/g, '-');
         }
 
         function gerarLoginDoMedico(nome, indice, usados) {
@@ -1767,6 +1777,53 @@
             return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
         }
 
+        function obterSlugsDoMedico(medico) {
+            const crmNumerico = (medico?.crm || '').replace(/\D/g, '');
+            return Array.from(new Set([
+                gerarSlug(medico?.nome || ''),
+                gerarSlug(medico?.login || ''),
+                crmNumerico ? `${gerarSlug(medico?.nome || '')}-${crmNumerico}` : '',
+                crmNumerico
+            ].filter(Boolean)));
+        }
+
+        function obterSlugMedicoDaUrl() {
+            const caminhoAtual = window.location.pathname || '/';
+            if (!caminhoAtual.startsWith(PREFIXO_URL_MEDICO)) {
+                return '';
+            }
+
+            const slug = caminhoAtual.slice(PREFIXO_URL_MEDICO.length).split('/')[0] || '';
+            return gerarSlug(decodeURIComponent(slug));
+        }
+
+        function encontrarMedicoPorSlug(slug) {
+            const slugNormalizado = gerarSlug(slug);
+            if (!slugNormalizado) return null;
+
+            return medicos.find((medico) => obterSlugsDoMedico(medico).includes(slugNormalizado)) || null;
+        }
+
+        function obterUrlDiretaMedico(medico) {
+            const slugPrincipal = gerarSlug(medico?.nome || medico?.login || '');
+            if (!slugPrincipal) return '';
+            return `${window.location.origin}${PREFIXO_URL_MEDICO}${slugPrincipal}`;
+        }
+
+        function definirMedicoLogado(medico, origem = 'manual') {
+            medicoLogado = medico;
+            acessoDiretoAtivo = origem === 'url';
+
+            if (medico) {
+                localStorage.setItem('medicoLogado', JSON.stringify(medico));
+            } else {
+                localStorage.removeItem('medicoLogado');
+            }
+
+            atualizarVisualMedicoLogado();
+            atualizarEstadoAcoesObrigatorias();
+        }
+
         function atualizarVisualMedicoLogado() {
             const assinaturaMedicoEl = document.getElementById('assinaturaMedico');
             const infoMedicoAssinaturaEl = document.getElementById('infoMedicoAssinatura');
@@ -1774,12 +1831,16 @@
             if (medicoLogado) {
                 assinaturaMedicoEl.innerHTML = '';
                 infoMedicoAssinaturaEl.textContent = `${medicoLogado.nome} — ${medicoLogado.crm}`;
-                loginStatusEl.textContent = `✅ Logado como ${medicoLogado.login}`;
+                loginStatusEl.textContent = acessoDiretoAtivo
+                    ? `🔗 Acesso direto liberado para ${medicoLogado.nome}`
+                    : `✅ Logado como ${medicoLogado.login}`;
                 medicoLogadoNome.textContent = medicoLogado.nome;
                 medicoLogadoCrm.textContent = medicoLogado.crm;
                 if (medicoAvatar) {
                     medicoAvatar.textContent = obterIniciais(medicoLogado.nome);
-                    medicoAvatar.title = medicoLogado.nome;
+                    medicoAvatar.title = acessoDiretoAtivo
+                        ? `${medicoLogado.nome} | ${obterUrlDiretaMedico(medicoLogado)}`
+                        : medicoLogado.nome;
                 }
                 btnEntrarMedico.disabled = true;
                 if (btnSairMedico) btnSairMedico.disabled = false;
@@ -1788,7 +1849,7 @@
             } else {
                 assinaturaMedicoEl.innerHTML = '';
                 infoMedicoAssinaturaEl.textContent = '';
-                loginStatusEl.textContent = '🔒 Faça login para abrir o pedido médico.';
+                loginStatusEl.textContent = mensagemAcessoLogin || '🔒 Faça login para abrir o pedido médico.';
                 medicoLogadoNome.textContent = 'Nenhum médico conectado.';
                 medicoLogadoCrm.textContent = '';
                 if (medicoAvatar) {
@@ -1858,18 +1919,51 @@
                 return;
             }
 
-            medicoLogado = medicoEncontrado;
-            atualizarVisualMedicoLogado();
-            atualizarEstadoAcoesObrigatorias();
+            mensagemAcessoLogin = '';
+            definirMedicoLogado(medicoEncontrado, 'manual');
         }
 
         function sairMedico() {
-            medicoLogado = null;
+            const estavaEmAcessoDireto = acessoDiretoAtivo || !!obterSlugMedicoDaUrl();
+            mensagemAcessoLogin = '';
             loginMedicoInput.value = '';
             senhaMedicoInput.value = '';
+            definirMedicoLogado(null, 'manual');
+            if (estavaEmAcessoDireto) {
+                window.history.replaceState({}, document.title, '/');
+            }
+            loginMedicoInput.focus();
+        }
+
+        async function aplicarAcessoInicial() {
+            await carregarMedicosDoCsv();
+
+            const slugDaUrl = obterSlugMedicoDaUrl();
+            if (slugDaUrl) {
+                const medicoViaUrl = encontrarMedicoPorSlug(slugDaUrl);
+                if (medicoViaUrl) {
+                    mensagemAcessoLogin = '';
+                    definirMedicoLogado(medicoViaUrl, 'url');
+                    return;
+                }
+
+                mensagemAcessoLogin = '⚠️ Link de acesso do médico não foi reconhecido. Faça login manualmente.';
+            }
+
+            const sessaoSalva = localStorage.getItem('medicoLogado');
+            if (sessaoSalva) {
+                try {
+                    const medicoDaSessao = JSON.parse(sessaoSalva);
+                    if (medicoDaSessao) {
+                        definirMedicoLogado(medicoDaSessao, 'manual');
+                        return;
+                    }
+                } catch (e) {
+                }
+            }
+
             atualizarVisualMedicoLogado();
             atualizarEstadoAcoesObrigatorias();
-            loginMedicoInput.focus();
         }
 
         [loginMedicoInput, senhaMedicoInput].forEach((el) => {
@@ -2215,7 +2309,7 @@
         atualizarObrigatoriedadeMae();
         atualizarEstadoAcoesObrigatorias();
         inicializarSupabase();
-        carregarMedicosDoCsv();
+        aplicarAcessoInicial();
     </script>
 </body>
 </html>

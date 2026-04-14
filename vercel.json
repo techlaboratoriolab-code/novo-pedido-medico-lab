@@ -24,6 +24,10 @@
       "dest": "/api/config.js"
     },
     {
+      "src": "/medico/(.*)",
+      "dest": "/pedido_medico.html"
+    },
+    {
       "src": "/",
       "dest": "/pedido_medico.html"
     }
